@@ -1,0 +1,111 @@
+.custom-btn-close {
+    background-color: white !important;
+    /* Ensure it overrides default styles */
+    border: none;
+    /* Remove border if necessary */
+    opacity: 1;
+    /* Ensure visibility */
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+/* Wrapper for the search bar */
+.search-bar-form {
+    display: flex;
+    align-items: center;
+    max-width: 500px;
+    /* Adjust as needed */
+    margin: 0 auto;
+    /* Center horizontally */
+}
+
+/* Input field styling */
+.search-input {
+    flex-grow: 1;
+    /* Take up remaining space */
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* Button styling */
+.search-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    height: 100%;
+    /* Match input field height */
+}
+
+/* Loader Styles */
+.loader {
+    width: 90px;
+    aspect-ratio: 1;
+    display: grid;
+}
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+}
+
+.loader:before,
+.loader:after {
+    content: "";
+    grid-area: 1/1;
+    color:  #1b7ae7;
+    animation: l19 1.5s infinite linear;
+}
+
+.loader:before {
+  margin: 8px 30px;
+    background: currentColor;
+}
+
+.loader:after {
+    border: solid;  border-width: 8px 30px;
+    --s: 0;
+}
+.loader-backdrop {
+  position: fixed;
+   /* Full viewport height */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 0; /* Ensures it is above other elements */
+}
+@keyframes l19 {
+    0% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 0);
+    }
+
+    25% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 90deg);
+    }
+
+    25.01% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 90deg);
+    }
+
+    40%,
+    60% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 180deg);
+    }
+
+    75% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 270deg);
+    }
+
+    75.01% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 270deg);
+    }
+
+    90%,
+    100% {
+        transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 360deg);
+    }
+}
