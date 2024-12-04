@@ -9,4 +9,4 @@ function HierarchyManagement() {
   )
 }
 
-export default HierarchyManagement
+export default HierarchyManagement;
