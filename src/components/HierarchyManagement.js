@@ -4,8 +4,8 @@ import UpdateSingleMultipleProjectUsers from './UpdateSingleMultipleProjectUsers
 function HierarchyManagement() {
   return (
     <>
-    <div>{UpdateSingleMultipleProjectUsers}</div>
-  </>
+      <div>{UpdateSingleMultipleProjectUsers}</div>
+    </>
   )
 }
 

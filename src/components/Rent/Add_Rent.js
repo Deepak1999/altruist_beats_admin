@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button } from 'react-bootstrap';
@@ -143,6 +142,7 @@ const Add_Rent = () => {
                                                 </div>
                                             </div>
 
+                                            
                                             <div className="col-md-3 mb-3">
                                                 <div className="form-group">
                                                     <label htmlFor="location" style={{
