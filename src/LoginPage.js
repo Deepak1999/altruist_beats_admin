@@ -1,4 +1,3 @@
- 
 import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Container, Paper, CircularProgress } from '@mui/material';
@@ -6,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './LoginPage.css';
 
 import beats from './assests/beats.png';
+import Api_base_url from './components/Api_base_url/Api_base_url';
 
 const LoginPage = () => {
     const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -13,7 +13,7 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const apiEndpoint = 'http://192.168.167.5:8560/auth/login';
+    const apiEndpoint = `${Api_base_url}/auth/login`;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,10 +41,9 @@ const LoginPage = () => {
             localStorage.setItem('jwttoken', token);
             localStorage.setItem('id', id);
             localStorage.setItem('username', name);
-            localStorage.setItem('password', password);
-
-            console.log('Login successful, token stored!');
-            navigate('/create-projects');
+            // localStorage.setItem('password', password);
+            // navigate('/create-projects');
+            navigate('/projects');
         } catch (error) {
             handleError(error);
         } finally {

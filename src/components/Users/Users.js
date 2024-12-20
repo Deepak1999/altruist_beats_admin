@@ -228,6 +228,7 @@ const Users = () => {
         setSelectedUserId(userId);
         fetchDeactivateUser(userId);
     };
+
     const fetchDeactivateUser = async (selectedUserId) => {
 
         const token = localStorage.getItem("jwttoken");
@@ -252,14 +253,12 @@ const Users = () => {
             console.log("Deactivate User Response:", response.data);
 
             if (response.status === 200) {
-                // Show success message
                 alert("User has been deactivated successfully!");
 
-                // Optionally update UI to reflect the user's deactivated status
                 setUsers((prevUsers) =>
                     prevUsers.map((user) =>
                         user.id === selectedUserId
-                            ? { ...user, isActive: false } // Assuming 'isActive' is a flag
+                            ? { ...user, isActive: false }
                             : user
                     )
                 );
@@ -268,7 +267,6 @@ const Users = () => {
             }
         } catch (err) {
             console.error("API Error:", err.response?.data || err.message);
-            // setError(err.response?.data?.statusMessage || "Something went wrong");
         }
 
     };
@@ -282,7 +280,6 @@ const Users = () => {
         empCode: ''
     });
 
-    // Handle input changes
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserData({
@@ -294,15 +291,13 @@ const Users = () => {
     const handleEditClick = (userId) => {
         setSelectedUserId(userId);
 
-        handleShow1(); // Show the modal
+        handleShow1();
     };
 
-    // Update user data on the backend
     const handleUpdateUser = async () => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
 
-        // Ensure the user is authenticated
         if (!token) {
             setError("User not authenticated");
             return;
@@ -312,13 +307,13 @@ const Users = () => {
             return;
         }
         const dataToSend = {
-            id: selectedUserId,  // Send the selected userId (that was passed via handleEditClick)
+            id: selectedUserId,
             email: userData.email,
             name: userData.name,
             shortName: userData.shortName,
             istype: userData.istype,
-            isactive: userData.isactive,
-            timezoneId: userData.timezoneId,
+            // isactive: userData.isactive,
+            // timezoneId: userData.timezoneId,
             roleId: userData.roleId,
             empCode: userData.empCode
         };
@@ -328,11 +323,11 @@ const Users = () => {
         try {
             const response = await axios.post(
                 'http://192.168.167.5:8560/api/users/update',
-                dataToSend,  // Send the user data including the id
+                dataToSend,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
-                        userId: userId  // Authorization token for API
+                        userId: userId
                     },
                 }
             );
@@ -534,7 +529,7 @@ const Users = () => {
                                 color: "#6a6a6a"
                             }}
                             >
-                                Email
+                                Email_Id
                             </p>
                             <p style={{
                                 lineHeight: "24px",
@@ -550,7 +545,7 @@ const Users = () => {
                                 color: "#6a6a6a"
                             }}
                             >
-                                Created
+                                Created on
                             </p>
                             <p style={{
                                 lineHeight: "24px",
@@ -940,7 +935,7 @@ const Users = () => {
                     <div className="modal-content">
                         <div className="modal-header" style={{ background: "#2cb7fd", color: "white" }}>
                             <h5 className="modal-title" id="addUserModalLabel">
-                                Assign Project &gt; Lara George
+                                Assign Project
                             </h5>
                             <button type="button" className="btn-close" onClick={handleClose3}></button>
                         </div>
@@ -1103,7 +1098,7 @@ const Users = () => {
                     <div className="modal-content" style={{width:"700px"}}>
                         <div className="modal-header" style={{ background: "#2cb7fd", color: "white" }}>
                             <h5 className="modal-title" id="addUserModalLabel">
-                               Remove Project &gt; Lara George
+                               Remove Project
                             </h5>
                             <button type="button" className="btn-close" onClick={handleClose4}></button>
                         </div>

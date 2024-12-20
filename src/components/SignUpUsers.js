@@ -1,5 +1,3 @@
-
-
 import React, { useState,useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Button, Alert, Card } from 'react-bootstrap';
@@ -75,21 +73,6 @@ const navigate = useNavigate();
                     },
                 }
             );
-
-            // const response = await axios.post(
-            //     'http://192.168.167.5:8560/api/users/sign-up',
-            //     [{
-            //         values,
-
-            //     }],
-            //     {
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //             'Authorization': `Bearer ${token}`,
-            //             'userId': userId
-            //         },
-            //     }
-            // );
 
             if (response.status === 200) {
                 showSuccessPopup();
