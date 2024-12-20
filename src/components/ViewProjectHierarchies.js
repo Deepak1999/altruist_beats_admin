@@ -8,43 +8,40 @@
 // import Loader from './Loader';
 // import { useNavigate } from 'react-router-dom';
 
-
 // const ViewProjectHierarchies = () => {
-
 //   const navigate = useNavigate();
-//   useEffect(() => {
-//     const token = localStorage.getItem('jwttoken');
-//     const userId = localStorage.getItem('id');
-//     if (!token || !userId) {
-
-//       navigate('/'); // Redirect to login if no token is found
-//     }
-//   }, [navigate]);
 
 //   const [data, setData] = useState(null);
 //   const [loading, setLoading] = useState(false);
 //   const [error, setError] = useState(null);
-//   const [projects, setProjects] = useState([]); // State for project names
+//   const [projects, setProjects] = useState([]);
 
 //   useEffect(() => {
-//     // Fetch project names when component mounts
+//     const token = localStorage.getItem('jwttoken');
+//     const userId = localStorage.getItem('id');
+//     if (!token || !userId) {
+//       navigate('/');
+//     }
+//   }, [navigate]);
+
+//   // Fetch Project Names
+//   useEffect(() => {
 //     const fetchProjects = async () => {
-//       // setLoading(true);
+//       setLoading(true);
 //       try {
 //         const response = await axios.get('http://192.168.167.5:8560/api/project/getprojects', {
 //           headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('jwttoken')}`,
-//             'userId': localStorage.getItem('id'),
+//             Authorization: `Bearer ${localStorage.getItem('jwttoken')}`,
+//             userId: localStorage.getItem('id'),
 //           },
 //         });
 
 //         if (response.status === 200) {
-//           setProjects(response.data); // Assuming response.data is an array of project names
+//           setProjects(response.data);
 //         } else {
 //           handleResponseErrors(response.status);
 //         }
 //       } catch (error) {
-//         console.error('Error fetching projects:', error);
 //         handleErrors(error);
 //       } finally {
 //         setLoading(false);
@@ -56,8 +53,44 @@
 
 //   const validationSchema = Yup.object({
 //     projectName: Yup.string().required('Project Name is required'),
-//     pageNo: Yup.number().required('Page Number is required').min(1, 'Page must be greater than 0'),
+//     pageNo: Yup.number()
+//       .required('Page Number is required')
+//       .min(1, 'Page must be greater than 0'),
 //   });
+
+//   const handleResponseErrors = (status, backendMessage) => {
+//     switch (status) {
+//       case 400:
+//         showErrorPopup('Bad Request');
+//         break;
+//       case 401:
+//         showErrorPopup('Unauthorized');
+//         break;
+//       case 403:
+//         showErrorPopup('Forbidden');
+//         break;
+//       case 404:
+//         showErrorPopup('Project not found');
+//         break;
+//       case 500:
+//         showErrorPopup('Server error');
+//         break;
+//       default:
+//         showErrorPopup(backendMessage || 'Unexpected error occurred');
+//     }
+//   };
+
+//   const handleErrors = (error) => {
+//     if (error.response) {
+//       handleResponseErrors(error.response.status);
+
+//       const backendMessage = error.response.data?.message;
+//     } else if (error.request) {
+//       showErrorPopup('No response from server');
+//     } else {
+//       showErrorPopup(error.message);
+//     }
+//   };
 
 //   const showSuccessPopup = () => {
 //     Swal.fire({
@@ -79,38 +112,6 @@
 //     });
 //   };
 
-//   const handleResponseErrors = (status) => {
-//     switch (status) {
-//       case 400:
-//         showErrorPopup('Bad Request');
-//         break;
-//       case 401:
-//         showErrorPopup('Unauthorized');
-//         break;
-//       case 403:
-//         showErrorPopup('Forbidden');
-//         break;
-//       case 404:
-//         showErrorPopup('Project not found');
-//         break;
-//       case 500:
-//         showErrorPopup('Server error');
-//         break;
-//       default:
-//         showErrorPopup('Unexpected error');
-//     }
-//   };
-
-//   const handleErrors = (error) => {
-//     if (error.response) {
-//       handleResponseErrors(error.response.status);
-//     } else if (error.request) {
-//       showErrorPopup('No response from server');
-//     } else {
-//       showErrorPopup(error.message);
-//     }
-//   };
-
 //   const fetchData = async (values, { resetForm }) => {
 //     setLoading(true);
 //     setError(null);
@@ -119,17 +120,19 @@
 //     const userId = localStorage.getItem('id');
 
 //     try {
-//       const response = await axios.get('http://192.168.167.5:8560/api/project/view-projects-hierarchy', {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//           'Authorization': `Bearer ${token}`,
-//           'userId': userId,
-//         },
-//         params: {
-//           name: values.projectName,
-//           page: values.pageNo,
-//         },
-//       });
+//       const response = await axios.get(
+//         'http://192.168.167.5:8560/api/project/view-projects-hierarchy',
+//         {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             userId: userId,
+//           },
+//           params: {
+//             name: values.projectName,
+//             page: values.pageNo,
+//           },
+//         }
+//       );
 
 //       if (response.status === 200) {
 //         if (response.data && response.data.length === 0) {
@@ -151,10 +154,8 @@
 
 //   return (
 //     <div className="container mt-4">
-//       {loading && <Loader loading={loading} />}
-
 //       <div className="label" style={{ marginTop: '177px' }}>
-//         <h6>View Project Hierarchies</h6>
+//         <h6>Add New Agreement</h6>
 //       </div>
 
 //       <Card className="p-3 card-1-v">
@@ -169,78 +170,21 @@
 //                 <div className="row">
 //                   <div className="card-1">
 //                     <div className="col-md-4 mb-4">
-//                       <label
-//                         htmlFor="projectName"
-//                         style={{
-//                           fontWeight: "bold",
-//                           fontSize: "0.9rem",
-//                           marginBottom: "-26px",
-//                           color: "#4b6584",
-//                           paddingBottom: "-15px",
-//                           position: "absolute",
-//                           marginLeft: "10px",
-//                           marginTop: "61px !important",
-//                           width: "fit-content",
-//                           backgroundColor: "white",
-//                         }}
-//                       >
-//                         Project Name*
+//                       <label htmlFor="pageNo" className="form-label">
+//                       Vendor Name
 //                       </label>
 //                       <Field
-//                         as="select"
-//                         id="projectName"
-//                         name="projectName"
-//                         className="form-control"
-//                         style={{ marginTop: '15px' }}
-//                       >
-//                         <option value="">Select a project</option>
-//                         {projects.map((project, index) => (
-//                           <option key={index} value={project.name}>
-//                             {project.name}
-//                           </option>
-//                         ))}
-//                       </Field>
-//                       <ErrorMessage name="projectName" component="div" className="text-danger" />
-//                     </div>
-
-//                     <div className="col-md-4 mb-4">
-//                       <label
-//                         htmlFor="pageNo"
-//                         style={{
-//                           fontWeight: "bold",
-//                           fontSize: "0.9rem",
-//                           marginBottom: "-26px",
-//                           color: "#4b6584",
-//                           paddingBottom: "-15px",
-//                           position: "absolute",
-//                           marginLeft: "2px !important",
-//                           marginTop: "61px !important",
-//                           width: "fit-content",
-//                           backgroundColor: "white",
-//                         }}
-//                       >
-//                         Page Number*
-//                       </label>
-//                       <Field
-//                         style={{ marginTop: '15px' }}
-//                         type="number"
+//                         type="text"
 //                         id="pageNo"
 //                         name="pageNo"
 //                         className="form-control"
-//                         placeholder="Enter page number"
+//                         placeholder="Enter Vendor Name"
 //                       />
-//                       <ErrorMessage name="pageNo" component="div" className="text-danger" />
 //                     </div>
 //                   </div>
 //                 </div>
 
-//                 <div
-//                   style={{
-//                     display: "flex",
-//                     justifyContent: 'center',
-//                     alignItems: 'center'
-//                   }}
-//                 >
+//                 <div className="d-flex justify-content-center align-items-center">
 //                   <Button
 //                     type="submit"
 //                     variant="primary"
@@ -271,54 +215,6 @@
 //             )}
 //           </Formik>
 //         </Card.Body>
-
-//         <div className="mt-4">
-//           {error && <Alert variant="danger">Error: {error.message}</Alert>}
-//           {data ? (
-//             <Card className="mt-3 card-v">
-//               <div className="label-2">
-//                 <h6>Response</h6>
-//               </div>
-//               <Card.Body>
-//                 <table>
-//                   <thead>
-//                     <tr>
-//                       {Object.keys(data[0])
-//                         .filter((key) => key !== 'userid' && key !== 'projectcompany' && key !== 'projectid' && key !== 'company')
-//                         .map((key) => {
-//                           return (
-//                             <th key={key}>
-//                               {
-//                                 key === 'projectname' ? 'Project Name'
-//                                   : key === 'hierarchy' ? 'Hierarchy'
-//                                     : key === 'username' ? 'Name'
-//                                       : key === 'useremail' ? 'User E-mail'
-//                                         : key}
-//                             </th>
-//                           );
-//                         })}
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {data.map((item, index) => (
-//                       <tr key={index}>
-//                         {Object.entries(item)
-//                           .filter(([key]) => key !== 'userid' && key !== 'projectcompany' && key !== 'projectid' && key !== 'company')
-//                           .map(([key, value], i) => (
-//                             <td key={i}>{value}</td>
-//                           ))}
-//                       </tr>
-//                     ))}
-//                   </tbody>
-//                 </table>
-//               </Card.Body>
-
-
-//             </Card>
-//           ) : (
-//             <p> </p>
-//           )}
-//         </div>
 //       </Card>
 //     </div>
 //   );
@@ -328,14 +224,9 @@
 
 
 
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import { Formik, Form, Field } from 'formik';
 import { Button, Spinner, Alert, Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import './BodyApi.css';
@@ -385,13 +276,6 @@ const ViewProjectHierarchies = () => {
     fetchProjects();
   }, []);
 
-  const validationSchema = Yup.object({
-    projectName: Yup.string().required('Project Name is required'),
-    pageNo: Yup.number()
-      .required('Page Number is required')
-      .min(1, 'Page must be greater than 0'),
-  });
-
   const handleResponseErrors = (status, backendMessage) => {
     switch (status) {
       case 400:
@@ -417,8 +301,6 @@ const ViewProjectHierarchies = () => {
   const handleErrors = (error) => {
     if (error.response) {
       handleResponseErrors(error.response.status);
-
-      const backendMessage = error.response.data?.message;
     } else if (error.request) {
       showErrorPopup('No response from server');
     } else {
@@ -487,133 +369,306 @@ const ViewProjectHierarchies = () => {
   };
 
   return (
-    <div className="container mt-4">
-      {loading && <Loader loading={loading} />}
+    <div className="containe px-4 pb-4 mt-4">
+      
 
-      <div className="label" style={{ marginTop: '177px' }}>
+      <Card className="p- card-1-v card p-0">
+      <div className="label" style={{ marginTop: '-18px', position:"static", }}>
         <h6>Add New Agreement</h6>
       </div>
-
-      <Card className="p-3 card-1-v">
-        <Card.Body>
+        <Card.Body className='pt-4'>
           <Formik
-            initialValues={{ projectName: '', pageNo: '' }}
-            validationSchema={validationSchema}
+            initialValues={{
+              vendorName: '',
+              gstNo: '',
+              panNo: '',
+              bankName: '',
+              accountNo: '',
+              ifsc: '',
+              siteId: '',
+              startDate: '',
+              endDate: '',
+              monthlyPayment: '',
+              location: '',
+              state: '',
+              siteAddress: '',
+              incrementPercent: '',
+              security: '',
+              area: '',
+              leasePeriod: '',
+            }}
             onSubmit={fetchData}
           >
             {({ isSubmitting, resetForm }) => (
               <Form>
                 <div className="row">
-                  <div className="card-1">
-                    <div className="col-md-4 mb-4">
-                      <label htmlFor="projectName" className="form-label">
-                        Project Name*
-                      </label>
-                      <Field
-                        as="select"
-                        id="projectName"
-                        name="projectName"
-                        className="form-control"
-                      >
-                        <option value="">Select a project</option>
-                        {projects.map((project, index) => (
-                          <option key={index} value={project.name}>
-                            {project.name}
-                          </option>
-                        ))}
-                      </Field>
-                      <ErrorMessage
-                        name="projectName"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </div>
+                  {/* Vendor Name */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="vendorName" className="form-label">
+                      Vendor Name
+                    </label>
+                    <Field
+                      type="text"
+                      id="vendorName"
+                      name="vendorName"
+                      className="form-control"
+                      placeholder="Enter Vendor Name"
+                    />
+                  </div>
 
-                    <div className="col-md-4 mb-4">
-                      <label htmlFor="pageNo" className="form-label">
-                        Page Number*
-                      </label>
-                      <Field
-                        type="number"
-                        id="pageNo"
-                        name="pageNo"
-                        className="form-control"
-                        placeholder="Enter page number"
-                      />
-                      <ErrorMessage
-                        name="pageNo"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </div>
+                  {/* GST Number */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="gstNo" className="form-label">
+                      GST Number
+                    </label>
+                    <Field
+                      type="text"
+                      id="gstNo"
+                      name="gstNo"
+                      className="form-control"
+                      placeholder="Enter GST Number"
+                    />
+                  </div>
+
+                  {/* PAN Number */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="panNo" className="form-label">
+                      PAN Number
+                    </label>
+                    <Field
+                      type="text"
+                      id="panNo"
+                      name="panNo"
+                      className="form-control"
+                      placeholder="Enter PAN Number"
+                    />
+                  </div>
+
+                  {/* Bank Name */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="bankName" className="form-label">
+                      Bank Name
+                    </label>
+                    <Field
+                      type="text"
+                      id="bankName"
+                      name="bankName"
+                      className="form-control"
+                      placeholder="Enter Bank Name"
+                    />
+                  </div>
+
+                  {/* Account Number */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="accountNo" className="form-label">
+                      Account Number
+                    </label>
+                    <Field
+                      type="text"
+                      id="accountNo"
+                      name="accountNo"
+                      className="form-control"
+                      placeholder="Enter Account Number"
+                    />
+                  </div>
+
+                  {/* IFSC Code */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="ifsc" className="form-label">
+                      IFSC Code
+                    </label>
+                    <Field
+                      type="text"
+                      id="ifsc"
+                      name="ifsc"
+                      className="form-control"
+                      placeholder="Enter IFSC Code"
+                    />
+                  </div>
+
+                  {/* Site ID */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="siteId" className="form-label">
+                      Site ID
+                    </label>
+                    <Field
+                      type="text"
+                      id="siteId"
+                      name="siteId"
+                      className="form-control"
+                      placeholder="Enter Site ID"
+                    />
+                  </div>
+
+                  {/* Start Date */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="startDate" className="form-label">
+                      Start Date
+                    </label>
+                    <Field
+                      type="date"
+                      id="startDate"
+                      name="startDate"
+                      className="form-control"
+                    />
+                  </div>
+
+                  {/* End Date */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="endDate" className="form-label">
+                      End Date
+                    </label>
+                    <Field
+                      type="date"
+                      id="endDate"
+                      name="endDate"
+                      className="form-control"
+                    />
+                  </div>
+
+                  {/* Monthly Payment */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="monthlyPayment" className="form-label">
+                      Monthly Payment
+                    </label>
+                    <Field
+                      type="number"
+                      id="monthlyPayment"
+                      name="monthlyPayment"
+                      className="form-control"
+                      placeholder="Enter Monthly Payment"
+                    />
+                  </div>
+
+                  {/* Location */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="location" className="form-label">
+                      Location
+                    </label>
+                    <Field
+                      type="text"
+                      id="location"
+                      name="location"
+                      className="form-control"
+                      placeholder="Enter Location"
+                    />
+                  </div>
+
+                  {/* State */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="state" className="form-label">
+                      State
+                    </label>
+                    <Field
+                      type="text"
+                      id="state"
+                      name="state"
+                      className="form-control"
+                      placeholder="Enter State"
+                    />
+                  </div>
+
+                  {/* Site Address */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="siteAddress" className="form-label">
+                      Site Address
+                    </label>
+                    <Field
+                      type="text"
+                      id="siteAddress"
+                      name="siteAddress"
+                      className="form-control"
+                      placeholder="Enter Site Address"
+                    />
+                  </div>
+
+                  {/* Increment Percent */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="incrementPercent" className="form-label">
+                      Increment Percent
+                    </label>
+                    <Field
+                      type="number"
+                      id="incrementPercent"
+                      name="incrementPercent"
+                      className="form-control"
+                      placeholder="Enter Increment Percent"
+                    />
+                  </div>
+
+                  {/* Security */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="security" className="form-label">
+                      Security
+                    </label>
+                    <Field
+                      type="text"
+                      id="security"
+                      name="security"
+                      className="form-control"
+                      placeholder="Enter Security"
+                    />
+                  </div>
+
+                  {/* Area */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="area" className="form-label">
+                      Area
+                    </label>
+                    <Field
+                      type="text"
+                      id="area"
+                      name="area"
+                      className="form-control"
+                      placeholder="Enter Area"
+                    />
+                  </div>
+
+                  {/* Lease Period */}
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="leasePeriod" className="form-label">
+                      Lease Period
+                    </label>
+                    <Field
+                      type="text"
+                      id="leasePeriod"
+                      name="leasePeriod"
+                      className="form-control"
+                      placeholder="Enter Lease Period"
+                    />
                   </div>
                 </div>
 
-                <div className="d-flex justify-content-center align-items-center">
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="me-2"
-                    disabled={isSubmitting || loading}
-                  >
-                    {loading ? (
-                      <Spinner as="span" animation="border" size="sm" />
-                    ) : (
-                      'Submit'
-                    )}
-                  </Button>
-
-                  <Button
-                    type="reset"
-                    variant="danger"
-                    onClick={() => {
-                      resetForm();
-                      setData(null);
-                      setError(null);
-                    }}
-                    disabled={isSubmitting || loading}
+                <div className="d-flex justify-content-center">
+                  <Button className='m-2'
+                    type="button"
+                    variant="secondary"
+                    onClick={() => resetForm()}
+                    disabled={isSubmitting}
                   >
                     Reset
+                  </Button>
+                  <Button className='m-2'
+                    type="submit"
+                    variant="primary"
+                    disabled={isSubmitting || loading}
+                  >
+                    {loading ? <Spinner animation="border" size="sm" /> : 'Submit'}
                   </Button>
                 </div>
               </Form>
             )}
           </Formik>
         </Card.Body>
-
-        <div className="mt-4">
-          {error && <Alert variant="danger">Error: {error.message}</Alert>}
-          {data ? (
-            <Card className="mt-3 card-v">
-              <div className="label-2">
-                <h6>Response</h6>
-              </div>
-              <Card.Body>
-                <table>
-                  <thead>
-                    <tr>
-                      {Object.keys(data[0]).map((key) => (
-                        <th key={key}>{key}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.map((item, index) => (
-                      <tr key={index}>
-                        {Object.values(item).map((value, i) => (
-                          <td key={i}>{value}</td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card.Body>
-            </Card>
-          ) : (
-            <p>No data available</p>
-          )}
-        </div>
       </Card>
+
+      {/* Render data if available */}
+      {data && (
+        <div className="mt-4">
+          <h5>Data:</h5>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 };

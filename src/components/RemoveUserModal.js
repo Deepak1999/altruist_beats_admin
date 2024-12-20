@@ -302,26 +302,26 @@ const RemoveUserModal = ({
                 <div className="modal-content" style={{ width: "700px" }}>
                     <div className="modal-header" style={{ background: "#2cb7fd", color: "white" }}>
                         <h5 className="modal-title" id="addUserModalLabel">
-                            Remove Project 
+                            Remove Project
                         </h5>
                         <button type="button" className="btn-close" onClick={handleClose2}></button>
                     </div>
-                    <div className="modal-body add_view_user">
+                    <div className="modal-body add_view_user px-4">
                         
                         <div className="row mt-3">
-                            <div className="col-md-4">
+                            <div className="col-md-12">
                                 <div
-                                    className="card"
+                                    className="card border-0 p-0"
                                     style={{
                                         boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)",
-                                        width: "27rem",
-                                        marginLeft: "-139px",
+                                        // width: "27rem",
+                                        // marginLeft: "-139px",
                                     }}
                                 >
                                     <div
                                         className="table-responsive"
                                         style={{
-                                            maxHeight: "300px",
+                                            maxHeight: "51vh",
                                             overflowY: "auto",
                                             border: "1px solid #ddd",
                                         }}

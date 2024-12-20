@@ -23,18 +23,18 @@ const AddOrViewUsersModal = ({
             aria-hidden="true"
             onClick={handleBackdropClick}
         >
-            <div className="modal-dialog">
-                <Backdrop
+            <div className="modal-dialog modal-xl">
+                {/* <Backdrop
                     sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
                     open={showModal}
                     onClick={handleCloseModal}
-                >
+                > */}
                     <div
                         className="modal-content"
                         style={{
-                            marginLeft: "-303px",
-                            marginRight: "-303px",
-                            width: "67%",
+                            // marginLeft: "-303px",
+                            // marginRight: "-303px",
+                            // width: "67%",
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -65,12 +65,12 @@ const AddOrViewUsersModal = ({
                                         color: "white",
                                     }}
                                 >
-                                    <div className="col-md-7 search-container">
+                                    {/* <div className="col-md-7 search-container"> */}
                                         <form
                                             onSubmit={handleSearchSubmit}
-                                            className="search-bar-form"
+                                            className="search-bar-form d-flex mx-auto" style={{width:"251px"}}
                                         >
-                                            <div className="form-group">
+                                            {/* <div className="form-group"> */}
                                                 <input
                                                     type="text"
                                                     className="form-control search-input"
@@ -79,30 +79,25 @@ const AddOrViewUsersModal = ({
                                                     value={searchTerm}
                                                     onChange={(e) => setSearchTerm(e.target.value)}
                                                 />
-                                            </div>
+                                            {/* </div> */}
                                             <button
                                                 type="submit"
-                                                className="btn btn-primary search-button"
+                                                className="btn btn-primary search-button m-0"
                                             >
                                                 <i className="fa fa-search"></i>
                                             </button>
                                         </form>
-                                    </div>
+                                    {/* </div> */}
                                 </div>
-                            </div>
-
-                            {/* Main Content */}
-                            <div className="row mt-3">
-                                <div className="col-md-12 d-flex justify-content-between">
-                                    {/* User Table */}
-                                    <div className="col-md-7">
+                                <div className="col-md-6 mx-auto my-2">
                                         <div
-                                            className="table-responsive-1"
+                                            className="table-responsive"
                                             style={{
-                                                maxHeight: "300px",
-                                                overflowY: "auto",
-                                                width: "490px",
+                                                // maxHeight: "300px",
+                                                // overflowY: "auto",
+                                                // width: "490px",
                                                 border: "1px solid #ddd",
+                                                maxHeight:'51vh',
                                             }}
                                         >
                                             <table className="table table-striped">
@@ -148,13 +143,15 @@ const AddOrViewUsersModal = ({
                                     </div>
 
                                     {/* Selected Users Table */}
-                                    <div className="col-md-4">
+                                    <div className="col-md-6 mx-auto my-2">
                                         <div
                                             className="table-responsive"
                                             style={{
-                                                marginLeft: "-190px",
-                                                maxHeight: "300px",
-                                                overflowY: "auto",
+                                                // marginLeft: "-190px",
+                                                // maxHeight: "300px",
+                                                // overflowY: "auto",
+                                                border: "1px solid #ddd",
+                                                maxHeight:'51vh',
                                             }}
                                         >
                                             <table className="table table-striped">
@@ -190,8 +187,9 @@ const AddOrViewUsersModal = ({
                                             </table>
                                         </div>
                                     </div>
-                                </div>
                             </div>
+
+                            
                         </div>
 
                         {/* Modal Footer */}
@@ -225,7 +223,7 @@ const AddOrViewUsersModal = ({
                             </button>
                         </div>
                     </div>
-                </Backdrop>
+                {/* </Backdrop> */}
             </div>
         </div>
     );

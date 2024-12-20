@@ -296,12 +296,12 @@ const NavBar = () => {
                 <Tab.Container activeKey={activeSubTab}>
                     <NavTabs variant="tabs" className="justify-content-center my-3">
                         <NavTabs.Item>
-                            <NavTabs.Link eventKey="get" onClick={() => handleSubTabSelect('get')} style={{ marginLeft: "-40px" }}>
+                            <NavTabs.Link className='fw-bold' eventKey="get" onClick={() => handleSubTabSelect('get')}>
                                 Existing Users Agreement
                             </NavTabs.Link>
                         </NavTabs.Item>
                         <NavTabs.Item>
-                            <NavTabs.Link eventKey="Add New Agreement" onClick={() => handleSubTabSelect('view-project-hierarchies')}>
+                            <NavTabs.Link className='fw-bold' eventKey="Add New Agreement" onClick={() => handleSubTabSelect('view-project-hierarchies')}>
                                 Add New Agreement
                             </NavTabs.Link>
                         </NavTabs.Item>

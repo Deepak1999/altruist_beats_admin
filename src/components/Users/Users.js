@@ -18,7 +18,7 @@ const Users = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(68); // Pagination state
+    const [currentPage, setCurrentPage] = useState(67); // Pagination state
     const itemsPerPage = 6; // Items per page
     const [activeMenu, setActiveMenu] = useState(null); // Active menu state for each user
     const navigate = useNavigate();
@@ -575,7 +575,7 @@ const Users = () => {
                                     right: "10px",
                                 }}
                             >
-                                <button
+                                <button className="m-0"
                                     type="button"
                                     style={{
                                         background: "none",
@@ -585,14 +585,14 @@ const Users = () => {
                                     }}
                                     onClick={() => toggleMenu(user.id)} // Pass the project ID to the toggle function
                                 >
-                                    <i className="fas fa-ellipsis-v"></i>
+                                    <i className="fas fa-ellipsis-v text-dark"></i>
                                 </button>
 
                                 {activeMenu === user.id && (
                                     <div
                                         style={{
                                             position: "absolute",
-                                            top: "30px",
+                                            top: "46px",
                                             right: "0",
                                             backgroundColor: "#fff",
                                             border: "1px solid #ccc",
@@ -895,6 +895,8 @@ const Users = () => {
                 </DialogTitle>
                 <DialogContent>
                     <form>
+                        <div className="row">
+                        <div className="col-6">
                         <TextField
                             label="New Password"
                             type="password"
@@ -903,7 +905,8 @@ const Users = () => {
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
                             required
-                        />
+                        /></div>
+                        <div className="col-6">
                         <TextField
                             label="Confirm Password"
                             type="password"
@@ -913,7 +916,8 @@ const Users = () => {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                         />
-
+                        </div>
+</div>
                     </form>
                 </DialogContent>
                 <DialogActions>
@@ -937,28 +941,24 @@ const Users = () => {
                             <h5 className="modal-title" id="addUserModalLabel">
                                 Assign Project
                             </h5>
-                            <button type="button" className="btn-close" onClick={handleClose3}></button>
+                            <button type="button" className="btn-close m-0" onClick={handleClose3}></button>
                         </div>
                         <div className="modal-body add_view_user">
                             <div className="row">
-                                <div className="col-md-12" style={{ display: "flex", justifyContent: "end" }}>
-                                    <div className="col-md-7 search-container">
-                                        <form action="/action_page.php" className="d-flex">
-                                            <input type="text" placeholder="Search.." name="search" />
-                                            <button type="submit">
+                                <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
+                                    {/* <div className="col-md-7 search-container"> */}
+                                        <form action="/action_page.php" className="search-bar-form d-flex mx-auto" style={{width:"251px"}}>
+                                            <input className="form-control" type="text" placeholder="Search.." name="search" />
+                                            <button className="m-0" type="submit">
                                                 <i className="fa fa-search"></i>
                                             </button>
                                         </form>
-                                    </div>
+                                    {/* </div> */}
                                 </div>
-                            </div>
-                            {/* Table inside modal */}
-                            <div className="row mt-3">
-                                <div className="col-md-12 d-flex justify-content-between">
-                                    <div className="col-md-7">
+                                <div className="col-md-6 my-2">
                                         <div
-                                            className="card"
-                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "25rem", marginLeft: "7px" }}
+                                            className="card p-0 w-100 h-100 m-0"
+                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "25rem"}}
                                         >
                                             <div className="table-responsive" style={{
                                                 maxHeight: "300px", 
@@ -1007,9 +1007,9 @@ const Users = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-4">
+                                    <div className="col-md-6 my-2">
                                         <div
-                                            className="card"
+                                            className="card p-0 w-100 h-100"
                                             style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "20rem" }}
                                         >
                                             <div className="table-responsive" style={{
@@ -1040,8 +1040,13 @@ const Users = () => {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
+                            {/* Table inside modal */}
+                            {/* <div className="row mt-3">
+                                <div className="col-md-12 d-flex justify-content-between">
+                                    
+                                </div>
+                            </div> */}
                         </div>
                         <div
                             className="modal-footer d-flex justify-content-center"
@@ -1104,22 +1109,20 @@ const Users = () => {
                         </div>
                         <div className="modal-body add_view_user">
                             <div className="row">
-                                <div className="col-md-12" style={{ display: "flex", justifyContent: "end" }}>
-                                    <div className="col-md-7 search-container">
-                                        <form action="/action_page.php" className="d-flex">
-                                            <input type="text" placeholder="Search.." name="search" />
-                                            <button type="submit">
+                                <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
+                                    {/* <div className="col-md-7 search-container"> */}
+                                        <form action="/action_page.php"
+                                            className="search-bar-form d-flex mx-auto" style={{width:"251px"}}>
+                                            <input className="form-control" type="text" placeholder="Search.." name="search" />
+                                            <button className="m-0" type="submit">
                                                 <i className="fa fa-search"></i>
                                             </button>
                                         </form>
-                                    </div>
+                                    {/* </div> */}
                                 </div>
-                            </div>
-                            {/* Table inside modal */}
-                            <div className="row mt-3">
-                                <div className="col-md-4">
+                                <div className="col-md-6 mx-auto my-2">
                                     <div
-                                        className="card"
+                                        className="card w-100 h-100 m-0"
                                         style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "27rem",marginLeft:"-139px" }}
                                     >
                                         <div className="table-responsive" style={{
@@ -1166,6 +1169,10 @@ const Users = () => {
                                     </div>
                                 </div>
                             </div>
+                            {/* Table inside modal */}
+                            {/* <div className="row mt-3">
+                                
+                            </div> */}
                         </div>
                         <div
                             className="modal-footer d-flex justify-content-center"
@@ -1180,7 +1187,7 @@ const Users = () => {
                                     border: "none",
                                     background: "transparent",
                                     color: "#0a869f",
-                                    marginLeft: "40rem"
+                                    // marginLeft: "40rem"
                                 }}
                             >
                                 Cancel
