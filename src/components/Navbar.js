@@ -297,7 +297,7 @@ const NavBar = () => {
                     <NavTabs variant="tabs" className="justify-content-center my-3">
                         <NavTabs.Item>
                             <NavTabs.Link className='fw-bold' eventKey="get" onClick={() => handleSubTabSelect('get')}>
-                                Existing Users Agreement
+                                Existing Rent Agreement
                             </NavTabs.Link>
                         </NavTabs.Item>
                         <NavTabs.Item>
