@@ -53,7 +53,6 @@ const LoginPage = () => {
 
     const handleError = (error) => {
         if (error.response) {
-            // Errors with response status
             const status = error.response.status;
             const message = error.response.data.message || error.response.statusText;
 
@@ -78,10 +77,8 @@ const LoginPage = () => {
                     break;
             }
         } else if (error.request) {
-            // Errors with no response
             setError('No response received. Please check your network connection.');
         } else {
-            // Other errors
             setError('An error occurred: ' + error.message);
         }
     };

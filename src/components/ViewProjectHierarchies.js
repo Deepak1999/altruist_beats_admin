@@ -1,383 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-// import { Formik, Form, Field } from 'formik';
-// import { Button, Spinner, Card } from 'react-bootstrap';
-// import Swal from 'sweetalert2';
-// import './BodyApi.css';
-// import { useNavigate } from 'react-router-dom';
-
-// const ViewProjectHierarchies = () => {
-//   const navigate = useNavigate();
-
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [projects, setProjects] = useState([]);
-
-//   useEffect(() => {
-//     const token = localStorage.getItem('jwttoken');
-//     const userId = localStorage.getItem('id');
-//     if (!token || !userId) {
-//       navigate('/');
-//     }
-//   }, [navigate]);
-
-//   useEffect(() => {
-//     const fetchProjects = async () => {
-//       setLoading(true);
-//       try {
-//         const response = await axios.get('http://192.168.167.5:8560/api/project/getprojects', {
-//           headers: {
-//             Authorization: `Bearer ${localStorage.getItem('jwttoken')}`,
-//             userId: localStorage.getItem('id'),
-//           },
-//         });
-
-//         if (response.status === 200) {
-//           setProjects(response.data);
-//         } else {
-//           handleResponseErrors(response.status);
-//         }
-//       } catch (error) {
-//         handleErrors(error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchProjects();
-//   }, []);
-
-//   const handleResponseErrors = (status, backendMessage) => {
-//     switch (status) {
-//       case 400:
-//         showErrorPopup('Bad Request');
-//         break;
-//       case 401:
-//         showErrorPopup('Unauthorized');
-//         break;
-//       case 403:
-//         showErrorPopup('Forbidden');
-//         break;
-//       case 404:
-//         showErrorPopup('Project not found');
-//         break;
-//       case 500:
-//         showErrorPopup('Server error');
-//         break;
-//       default:
-//         showErrorPopup(backendMessage || 'Unexpected error occurred');
-//     }
-//   };
-
-//   const handleErrors = (error) => {
-//     if (error.response) {
-//       handleResponseErrors(error.response.status);
-//     } else if (error.request) {
-//       showErrorPopup('No response from server');
-//     } else {
-//       showErrorPopup(error.message);
-//     }
-//   };
-
-//   const showErrorPopup = (message = 'Something went wrong!') => {
-//     Swal.fire({
-//       icon: 'error',
-//       title: 'Oops...',
-//       text: message,
-//       showConfirmButton: false,
-//       timer: 1000,
-//     });
-//   };
-
-//   return (
-//     <div className="containe px-4 pb-4 mt-4">
-//       <Card className="p- card-1-v card p-0">
-//         <div className="label" style={{ marginTop: '-18px', position: "static", }}>
-//           <h6>Add New Agreement</h6>
-//         </div>
-//         <Card.Body className='pt-4'>
-//           <Formik
-//             initialValues={{
-//               vendorName: '',
-//               gstNo: '',
-//               panNo: '',
-//               bankName: '',
-//               accountNo: '',
-//               ifsc: '',
-//               siteId: '',
-//               startDate: '',
-//               endDate: '',
-//               monthlyPayment: '',
-//               location: '',
-//               state: '',
-//               siteAddress: '',
-//               incrementPercent: '',
-//               security: '',
-//               area: '',
-//               leasePeriod: '',
-//             }}
-//           >
-//             {({ isSubmitting, resetForm }) => (
-//               <Form>
-//                 <div className="row">
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="vendorName" className="form-label">
-//                       Vendor Name
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="vendorName"
-//                       name="vendorName"
-//                       className="form-control"
-//                       placeholder="Enter Vendor Name"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="gstNo" className="form-label">
-//                       GST Number
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="gstNo"
-//                       name="gstNo"
-//                       className="form-control"
-//                       placeholder="Enter GST Number"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="panNo" className="form-label">
-//                       PAN Number
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="panNo"
-//                       name="panNo"
-//                       className="form-control"
-//                       placeholder="Enter PAN Number"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="bankName" className="form-label">
-//                       Bank Name
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="bankName"
-//                       name="bankName"
-//                       className="form-control"
-//                       placeholder="Enter Bank Name"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="accountNo" className="form-label">
-//                       Account Number
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="accountNo"
-//                       name="accountNo"
-//                       className="form-control"
-//                       placeholder="Enter Account Number"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="ifsc" className="form-label">
-//                       IFSC Code
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="ifsc"
-//                       name="ifsc"
-//                       className="form-control"
-//                       placeholder="Enter IFSC Code"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="siteId" className="form-label">
-//                       Site ID
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="siteId"
-//                       name="siteId"
-//                       className="form-control"
-//                       placeholder="Enter Site ID"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="startDate" className="form-label">
-//                       Start Date
-//                     </label>
-//                     <Field
-//                       type="date"
-//                       id="startDate"
-//                       name="startDate"
-//                       className="form-control"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="endDate" className="form-label">
-//                       End Date
-//                     </label>
-//                     <Field
-//                       type="date"
-//                       id="endDate"
-//                       name="endDate"
-//                       className="form-control"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="monthlyPayment" className="form-label">
-//                       Monthly Payment
-//                     </label>
-//                     <Field
-//                       type="number"
-//                       id="monthlyPayment"
-//                       name="monthlyPayment"
-//                       className="form-control"
-//                       placeholder="Enter Monthly Payment"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="location" className="form-label">
-//                       Location
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="location"
-//                       name="location"
-//                       className="form-control"
-//                       placeholder="Enter Location"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="state" className="form-label">
-//                       State
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="state"
-//                       name="state"
-//                       className="form-control"
-//                       placeholder="Enter State"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="siteAddress" className="form-label">
-//                       Site Address
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="siteAddress"
-//                       name="siteAddress"
-//                       className="form-control"
-//                       placeholder="Enter Site Address"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="incrementPercent" className="form-label">
-//                       Increment Percent
-//                     </label>
-//                     <Field
-//                       type="number"
-//                       id="incrementPercent"
-//                       name="incrementPercent"
-//                       className="form-control"
-//                       placeholder="Enter Increment Percent"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="security" className="form-label">
-//                       Security
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="security"
-//                       name="security"
-//                       className="form-control"
-//                       placeholder="Enter Security"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="area" className="form-label">
-//                       Area
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="area"
-//                       name="area"
-//                       className="form-control"
-//                       placeholder="Enter Area"
-//                     />
-//                   </div>
-
-//                   <div className="col-md-3 col-6 mb-4">
-//                     <label htmlFor="leasePeriod" className="form-label">
-//                       Lease Period
-//                     </label>
-//                     <Field
-//                       type="text"
-//                       id="leasePeriod"
-//                       name="leasePeriod"
-//                       className="form-control"
-//                       placeholder="Enter Lease Period"
-//                     />
-//                   </div>
-//                 </div>
-
-//                 <div className="d-flex justify-content-center">
-//                   <Button className='m-2'
-//                     type="button"
-//                     variant="secondary"
-//                     onClick={() => resetForm()}
-//                     disabled={isSubmitting}
-//                   >
-//                     Reset
-//                   </Button>
-//                   <Button className='m-2'
-//                     type="submit"
-//                     variant="primary"
-//                     disabled={isSubmitting || loading}
-//                   >
-//                     {loading ? <Spinner animation="border" size="sm" /> : 'create agreement'}
-//                   </Button>
-//                 </div>
-//               </Form>
-//             )}
-//           </Formik>
-//         </Card.Body>
-//       </Card>
-
-//       {data && (
-//         <div className="mt-4">
-//           <h5>Data:</h5>
-//           <pre>{JSON.stringify(data, null, 2)}</pre>
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ViewProjectHierarchies;
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Formik, Form, Field } from 'formik';
@@ -389,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const ViewProjectHierarchies = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [siteIds, setSiteIds] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('jwttoken');
@@ -396,10 +17,44 @@ const ViewProjectHierarchies = () => {
     if (!token || !userId) {
       navigate('/');
     }
+    // }, [navigate]);
+
+    const fetchSiteIds = async () => {
+      try {
+        const response = await fetch(
+          'http://192.168.167.5:8560/api/project/get/project/siteIds',
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('jwttoken')}`,
+              userId: localStorage.getItem('id'),
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data.siteIds)) {
+            setSiteIds(data.siteIds);
+          } else {
+            setSiteIds([]);
+            console.error('Site IDs are not an array:', data);
+          }
+        } else {
+          const errorData = await response.json();
+          handleResponseErrors(response.status, errorData.statusDescription);
+        }
+      } catch (error) {
+        handleErrors(error);
+      }
+    };
+
+    fetchSiteIds();
   }, [navigate]);
 
+
+
   const handleSubmit = async (values) => {
-    console.log('Form submitted with values:', values); // Add logging to check the values
+    console.log('Form submitted with values:', values);
     setLoading(true);
 
     const formData = new FormData();
@@ -631,7 +286,7 @@ const ViewProjectHierarchies = () => {
                     />
                   </div>
 
-                  <div className="col-md-3 col-6 mb-4">
+                  {/* <div className="col-md-3 col-6 mb-4">
                     <label htmlFor="siteId" className="form-label">
                       Site ID
                     </label>
@@ -642,6 +297,22 @@ const ViewProjectHierarchies = () => {
                       className="form-control"
                       placeholder="Enter Site ID"
                     />
+                  </div> */}
+
+                  <div className="col-md-3 col-6 mb-4">
+                    <label htmlFor="siteId" className="form-label">
+                      Site ID
+                    </label>
+                    <Field as="select" name="siteId" className="form-control">
+                      <option value="">Select Site ID</option>
+                      {/* Only map over siteIds if it's an array */}
+                      {Array.isArray(siteIds) &&
+                        siteIds.map((siteId) => (
+                          <option key={siteId} value={siteId}>
+                            {siteId}
+                          </option>
+                        ))}
+                    </Field>
                   </div>
 
                   <div className="col-md-3 col-6 mb-4">
