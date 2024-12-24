@@ -44,40 +44,48 @@
     aspect-ratio: 1;
     display: grid;
 }
+
 .loader-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full viewport height */
-  width: 100vw; /* Full viewport width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Full viewport height */
+    width: 100vw;
+    /* Full viewport width */
 }
 
 .loader:before,
 .loader:after {
     content: "";
     grid-area: 1/1;
-    color:  #1b7ae7;
+    color: #1b7ae7;
     animation: l19 1.5s infinite linear;
 }
 
 .loader:before {
-  margin: 8px 30px;
+    margin: 8px 30px;
     background: currentColor;
 }
 
 .loader:after {
-    border: solid;  border-width: 8px 30px;
+    border: solid;
+    border-width: 8px 30px;
     --s: 0;
 }
+
 .loader-backdrop {
-  position: fixed;
-   /* Full viewport height */
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 0; /* Ensures it is above other elements */
+    position: fixed;
+    /* Full viewport height */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+    /* Ensures it is above other elements */
 }
+
 @keyframes l19 {
     0% {
         transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 0);

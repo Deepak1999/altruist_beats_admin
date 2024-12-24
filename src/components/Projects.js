@@ -7,8 +7,8 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Grid } fr
 import { Modal, Button, Form, Table, Dropdown } from 'react-bootstrap';
 import RemoveUserModal from "./RemoveUserModal";
 import AddOrViewUsersModal from "./AddOrViewUsersModal";
-// import claim2 from "../assets/claim22.png";
-
+import Select from "react-select";
+import Swal from 'sweetalert2';
 import './Projects.css';
 
 const Projects = ({ token, userId }) => {
@@ -27,21 +27,18 @@ const Projects = ({ token, userId }) => {
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [nonUsers, setNonUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchResults, setSearchResults] = useState([]); const [approvers, setApprovers] = useState([]);
+    const [searchResults, setSearchResults] = useState([]);
+    const [approvers, setApprovers] = useState([]);
     const [currentPopUpProjectId, setCurrentPopUpProjectId] = useState(null);
     const [isAnimating, setIsAnimating] = useState(false);
     const [showModal1, setShowModal1] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
     const [showModal3, setShowModal3] = useState(false);
     const [showHierarchyModal, setShowHierarchyModal] = useState(false);
-
-
     const handleShow1 = () => setShowModal1(true);
     const handleClose1 = () => setShowModal1(false);
-
     const handleShow2 = () => setShowModal2(true);
     const handleClose2 = () => setShowModal2(false);
-
     const handleShow3 = () => setShowModal3(true);
     const handleClose3 = () => setShowModal3(false);
     const handleOpenModal3 = () => setShowModal3(true);
@@ -52,6 +49,19 @@ const Projects = ({ token, userId }) => {
             setShowModal3(false);
         }
     };
+
+    const [name, setName] = useState("");
+    const [shortName, setShortName] = useState("");
+    const [company, setCompany] = useState("");
+    const [type, setType] = useState("");
+    const [initiator, setInitiator] = useState("");
+    const [selectedUserNew, setSelectedUserNew] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // State to store users, initiators, and companies fetched from API
+    const [usersNew, setUsersNew] = useState([]);
+    const [initiators, setInitiators] = useState([]);
+    const [companies, setCompanies] = useState([]);
 
     const navigate = useNavigate();
 
@@ -117,7 +127,7 @@ const Projects = ({ token, userId }) => {
                         return project;
                     })
                 );
-                setSelectedUsers([]);
+                setSelectedUserNew([]);
             } else {
                 alert(response.data.message || "Failed to add users");
             }
@@ -126,9 +136,10 @@ const Projects = ({ token, userId }) => {
             alert("Error: " + (error.response?.data?.message || error.message));
         }
     };
+
     const handleNextPage = () => {
         if (currentPage * itemsPerPage < projects.length) {
-            setCurrentPage(currentPage + 1);
+            setCurrentPage(currentPage + 50);
         }
     };
 
@@ -271,6 +282,7 @@ const Projects = ({ token, userId }) => {
         }
 
         fetchProjects(token, userId);
+        fetchData();
     }, []);
 
     const colors = [
@@ -378,6 +390,154 @@ const Projects = ({ token, userId }) => {
             setError(err.response?.data?.statusMessage || "Something went wrong");
         }
     };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        if (name === "name") setName(value);
+        else if (name === "shortName") setShortName(value);
+        else if (name === "company") setCompany(value);
+        else if (name === "type") setType(value);
+        else if (name === "initiator") setInitiator(value);
+        else if (name === "user") setSelectedUserNew(value);
+    };
+
+    // const handleUserChange = (e) => {
+    //     const selectedOptions = selectedOptions ? selectedOptions.map(option => option.email) : [];
+    //     setSelectedUserNew(selectedOptions);
+    // };
+
+    const handleUserChange = (selectedOptions) => {
+        // Ensure the selected options are not undefined or null
+        const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
+        setSelectedUsers(selectedEmails); // Store the selected emails
+    };
+
+    const handleSubmit = async (e) => {
+        const token = localStorage.getItem("jwttoken");
+        const userId = localStorage.getItem("id");
+        e.preventDefault();
+
+        const requestPayload = {
+            name,
+            shortName,
+            company,
+            type,
+            initiator,
+            users: selectedUsers // Assuming selectedUsers is an array
+        };
+
+        try {
+            const response = await fetch("http://192.168.167.5:8560/api/project/create-single-project", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                    userId: userId,
+                },
+                body: JSON.stringify(requestPayload),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log("Form submitted successfully:", result);
+
+                // Display success message using SweetAlert
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Project created successfully.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+
+                // Close modal or reset form after success
+                setIsModalOpen(false);  // Assuming you're closing the modal here
+            } else {
+                // If the response status is not OK, show an error message
+                console.error("Error submitting form:", response.statusText);
+
+                // Display error message using SweetAlert
+                Swal.fire({
+                    title: 'Error!',
+                    text: `Failed to create project: ${response.statusText}`,
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+            }
+        } catch (error) {
+            // Catch any other errors
+            console.error("Error:", error);
+
+            // Display error message using SweetAlert for any unexpected errors
+            Swal.fire({
+                title: 'Error!',
+                text: 'An unexpected error occurred. Please try again later.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    };
+
+
+
+    const fetchData = async () => {
+        const token = localStorage.getItem("jwttoken");
+        const userId = localStorage.getItem("id");
+
+        try {
+            const userResponse = await axios.get(
+                "http://192.168.167.5:8560/api/users/all/user",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
+                    },
+                }
+            );
+
+            const initiatorResponse = await axios.get(
+                "http://192.168.167.5:8560/api/users/all/user",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
+                    },
+                }
+            );
+
+            const companyResponse = await axios.get(
+                "http://192.168.167.5:8560/api/project/get/companies",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
+                    },
+                }
+            );
+
+            if (
+                userResponse.status === 200 &&
+                initiatorResponse.status === 200 &&
+                companyResponse.status === 200
+            ) {
+                setUsersNew(userResponse.data.users);
+                setInitiators(initiatorResponse.data.users);
+                setCompanies(companyResponse.data.companies);
+            } else {
+                setError("No data found.");
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Failed to fetch data.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const userOptions = usersNew.map(user => ({
+        value: user.id,
+        label: user.email, // Display email in the dropdown
+        email: user.email, // Store email as a separate field
+    }));
 
     return (
         <div style={{ padding: "2rem" }}>
@@ -541,8 +701,6 @@ const Projects = ({ token, userId }) => {
                                                 </span>
                                             ))}
                                         </div>
-
-
                                     </div>
                                     <hr
                                         style={{
@@ -609,6 +767,7 @@ const Projects = ({ token, userId }) => {
                                     >
                                         <i className="fas fa-ellipsis-v text-dark"></i>
                                     </button>
+
                                     {activeMenu === project.projectId && (
                                         <div
                                             style={{
@@ -699,7 +858,6 @@ const Projects = ({ token, userId }) => {
                                                 </li>
                                                 <li>
                                                     <a
-
                                                         onClick={(e) => {
                                                             setCurrentPopUpProjectId(project.projectId);
 
@@ -745,7 +903,6 @@ const Projects = ({ token, userId }) => {
                                 </div>
                             </div>
                         ))}
-
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem" }}>
@@ -757,11 +914,9 @@ const Projects = ({ token, userId }) => {
                         >
                             <FaChevronLeft />
                         </button>
-
                         <span style={{ margin: "0 10px" }}>
                             Page {currentPage} of {Math.ceil(projects.length / itemsPerPage)}
                         </span>
-
                         <button
                             className="btn btn-secondary"
                             onClick={handleNextPage}
@@ -770,12 +925,166 @@ const Projects = ({ token, userId }) => {
                         >
                             <FaChevronRight />
                         </button>
-                    </div>
 
+
+
+                        <div>
+                            {/* Button to trigger modal */}
+                            <div>
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    style={{
+                                        backgroundColor: "blue",
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                        color: "white",
+                                        padding: "10px",
+                                        border: "none",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Create Project
+                                </button>
+                            </div>
+
+                            {/* Modal */}
+                            {isModalOpen && (
+                                <div
+                                    style={{
+                                        position: "fixed",
+                                        top: "0",
+                                        left: "0",
+                                        right: "0",
+                                        bottom: "0",
+                                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            backgroundColor: "white",
+                                            padding: "20px",
+                                            borderRadius: "8px",
+                                            width: "400px",
+                                        }}
+                                    >
+                                        <h2>Create Project</h2>
+                                        {loading && <p>Loading...</p>}
+                                        {error && <p style={{ color: "red" }}>{error}</p>}
+                                        <form onSubmit={handleSubmit}>
+                                            <div>
+                                                <label>Name:</label>
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    value={name}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label>Short Name:</label>
+                                                <input
+                                                    type="text"
+                                                    name="shortName"
+                                                    value={shortName}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label>Company:</label>
+                                                <select name="company" value={company} onChange={handleInputChange} required>
+                                                    <option value="">Select Company</option>
+                                                    {companies.map((companyOption) => (
+                                                        <option key={companyOption.id} value={companyOption.name}>
+                                                            {companyOption.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label>Type:</label>
+                                                <select name="type" value={type} onChange={handleInputChange} required>
+                                                    <option value="">Select Type</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label>Initiator:</label>
+                                                <select name="initiator" value={initiator} onChange={handleInputChange} required>
+                                                    <option value="">Select Initiator</option>
+                                                    {initiators.map((initiatorOption) => (
+                                                        <option key={initiatorOption.id} value={initiatorOption.email}>
+                                                            {initiatorOption.email}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            {/* <div>
+                                                <label>Users:</label>
+                                                <select
+                                                    name="users"
+                                                    value={selectedUserNew}
+                                                    onChange={handleInputChange}
+                                                    // multiple
+                                                    required
+                                                >
+                                                    <option value="">Select Users</option>
+                                                    {usersNew.map((userOption) => (
+                                                        <option key={userOption.id} value={userOption.id}>
+                                                            {userOption.email}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div> */}
+
+                                            <div>
+                                                <label>Users:</label>
+                                                <Select
+                                                    isMulti
+                                                    name="users"
+                                                    options={userOptions}
+                                                    value={userOptions.filter(option =>
+                                                        selectedUsers.includes(option.email)
+                                                    )}
+                                                    onChange={handleUserChange}
+                                                    getOptionLabel={(e) => e.label}
+                                                    getOptionValue={(e) => e.value}
+                                                />
+                                                <div>
+                                                    <strong>Selected Users:</strong>
+                                                    <p>{selectedUsers.join(", ")}</p>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <button type="submit">Create</button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsModalOpen(false)}
+                                                    style={{ marginLeft: "10px" }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+
+                    </div>
                 </div>
             )
             }
-
             <AddOrViewUsersModal
                 showModal={showModal}
                 handleCloseModal={handleCloseModal}
@@ -789,7 +1098,6 @@ const Projects = ({ token, userId }) => {
                 selectedProjectId={currentPopUpProjectId}
                 handleAddUser={handleAddUser}
             />
-
             <Dialog
                 open={showModal1}
                 onClose={handleClose1}
@@ -812,7 +1120,6 @@ const Projects = ({ token, userId }) => {
                 >
                     Project Details
                 </DialogTitle>
-
                 <div
                     style={{
                         position: "relative",
@@ -830,7 +1137,6 @@ const Projects = ({ token, userId }) => {
                         borderRadius: ".25rem",
                     }}
                 >
-
                     <DialogContent
                         style={{
                             fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
@@ -908,7 +1214,6 @@ const Projects = ({ token, userId }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
             <RemoveUserModal
                 projects={projects}
                 selectedProjectId={selectedProjectId}
@@ -980,8 +1285,6 @@ const Projects = ({ token, userId }) => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-
             <div
                 className={`modal fade ${showHierarchyModal ? "show" : ""} ${isAnimating ? "fade-out" : ""}`}
                 style={{ display: showHierarchyModal || isAnimating ? "block" : "none" }}
@@ -1010,118 +1313,108 @@ const Projects = ({ token, userId }) => {
                                     className="col-md-12 my-2"
                                     style={{ display: "flex", justifyContent: "start" }}
                                 >
-                                    {/* <div className="col-md-7 search-container search-container-1 px-2"> */}
-                                        <form action="/action_page.php" className="d-flex mx-auto" style={{width:"251px"}}>
-                                            <input className="form-control" type="text" placeholder="Search.." name="search" />
-                                            <button type="submit" className="m-0">
-                                                <i className="fa fa-search" />
-                                            </button>
-                                        </form>
-                                    {/* </div> */}
+                                    <form action="/action_page.php" className="d-flex mx-auto" style={{ width: "251px" }}>
+                                        <input className="form-control" type="text" placeholder="Search.." name="search" />
+                                        <button type="submit" className="m-0">
+                                            <i className="fa fa-search" />
+                                        </button>
+                                    </form>
                                 </div>
                                 <div className="col-md-6 mx-auto my-2">
-                                        <div
-                                            className="card h-100"
-                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)"}}
-                                        >
-                                            <div className="table-responsive"
+                                    <div
+                                        className="card h-100"
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)" }}
+                                    >
+                                        <div className="table-responsive"
                                             style={{
-                                                // marginLeft: "-190px",
-                                                // maxHeight: "300px",
-                                                // overflowY: "auto",
                                                 border: "1px solid #ddd",
-                                                maxHeight:'51vh',
+                                                maxHeight: '51vh',
                                             }}>
-                                                <table className="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>User Name</th>
-                                                            <th>Email</th>
-                                                            <th>Role</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    className="form-check-input"
-                                                                    id="user1"
-                                                                />
-                                                            </td>
-                                                            <td>Muskan</td>
-                                                            <td>muskan@example.com</td>
-                                                            <td>Admin</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div className="row">
-                                                <div
-                                                    className="col-md-12 px-4 my-1"
-                                                    style={{ display: "flex", justifyContent: "end" }}
+                                            <table className="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>User Name</th>
+                                                        <th>Email</th>
+                                                        <th>Role</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="form-check-input"
+                                                                id="user1"
+                                                            />
+                                                        </td>
+                                                        <td>Muskan</td>
+                                                        <td>muskan@example.com</td>
+                                                        <td>Admin</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="row">
+                                            <div
+                                                className="col-md-12 px-4 my-1"
+                                                style={{ display: "flex", justifyContent: "end" }}
+                                            >
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-info btn-sm"
+                                                    style={{ color: "white", fontWeight: 600 }}
                                                 >
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-info btn-sm"
-                                                        style={{ color: "white", fontWeight: 600 }}
-                                                    >
-                                                        Add
-                                                    </button>
-                                                </div>
+                                                    Add
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-6 mx-auto my-2">
-                                        <div
-                                            className="card h-100"
-                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)",}}
-                                        >
-                                            <div className="table-responsive"
+                                </div>
+                                <div className="col-md-6 mx-auto my-2">
+                                    <div
+                                        className="card h-100"
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", }}
+                                    >
+                                        <div className="table-responsive"
                                             style={{
-                                                // marginLeft: "-190px",
-                                                // maxHeight: "300px",
-                                                // overflowY: "auto",
                                                 border: "1px solid #ddd",
-                                                maxHeight:'51vh',
+                                                maxHeight: '51vh',
                                             }}>
-                                                <table className="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th ID />
-                                                            <th>Name</th>
-                                                            <th>Email</th>
-                                                            <th>Hierarchy</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
+                                            <table className="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th ID />
+                                                        <th>Name</th>
+                                                        <th>Email</th>
+                                                        <th>Hierarchy</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
 
-                                                    <tbody>
-                                                        {approvers.map((approver) => (
-                                                            <tr key={approver.userId}>
-                                                                <td>
-                                                                    <label className="switch">
-                                                                        <input type="checkbox" id={`approver-${approver.userId}`} />
-                                                                        <span className="slider round" />
-                                                                    </label>
-                                                                </td>
-                                                                <td>{approver.name}</td>
-                                                                <td>{approver.email}</td>
-                                                                <td>{approver.hierarchy}</td>
-                                                                <td>
-                                                                    <i className="fas fa-pencil-alt" />
-                                                                </td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                <tbody>
+                                                    {approvers.map((approver) => (
+                                                        <tr key={approver.userId}>
+                                                            <td>
+                                                                <label className="switch">
+                                                                    <input type="checkbox" id={`approver-${approver.userId}`} />
+                                                                    <span className="slider round" />
+                                                                </label>
+                                                            </td>
+                                                            <td>{approver.name}</td>
+                                                            <td>{approver.email}</td>
+                                                            <td>{approver.hierarchy}</td>
+                                                            <td>
+                                                                <i className="fas fa-pencil-alt" />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
+                                </div>
                             </div>
-
-                            
                         </div>
                         <div className="modal-footer">
                             <button
@@ -1144,9 +1437,7 @@ const Projects = ({ token, userId }) => {
                     </div>
                 </div>
             </div>
-
         </div >
-
     );
 };
 

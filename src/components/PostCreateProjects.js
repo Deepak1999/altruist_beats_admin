@@ -166,7 +166,9 @@
 //     );
 // }
 
-// export default PostCreateProjects;
+
+
+
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -184,7 +186,7 @@ function PostCreateProjects() {
         const userId = localStorage.getItem('id');
         if (!token || !userId) {
 
-            navigate('/'); // Redirect to login if no token is found
+            navigate('/');
         }
     }, [navigate]);
 
@@ -274,8 +276,8 @@ function PostCreateProjects() {
             return axios.post('http://192.168.167.5:8560/api/project/create-project', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`,  // Include token in Authorization header
-                    'userId': userId, // Include userId in headers
+                    'Authorization': `Bearer ${token}`,
+                    'userId': userId,
                 }
             })
                 .then((response) => {

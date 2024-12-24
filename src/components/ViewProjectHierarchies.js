@@ -286,26 +286,12 @@ const ViewProjectHierarchies = () => {
                     />
                   </div>
 
-                  {/* <div className="col-md-3 col-6 mb-4">
-                    <label htmlFor="siteId" className="form-label">
-                      Site ID
-                    </label>
-                    <Field
-                      type="text"
-                      id="siteId"
-                      name="siteId"
-                      className="form-control"
-                      placeholder="Enter Site ID"
-                    />
-                  </div> */}
-
                   <div className="col-md-3 col-6 mb-4">
                     <label htmlFor="siteId" className="form-label">
                       Site ID
                     </label>
                     <Field as="select" name="siteId" className="form-control">
                       <option value="">Select Site ID</option>
-                      {/* Only map over siteIds if it's an array */}
                       {Array.isArray(siteIds) &&
                         siteIds.map((siteId) => (
                           <option key={siteId} value={siteId}>
