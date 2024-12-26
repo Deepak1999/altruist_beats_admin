@@ -51,8 +51,6 @@ const ViewProjectHierarchies = () => {
     fetchSiteIds();
   }, [navigate]);
 
-
-
   const handleSubmit = async (values) => {
     console.log('Form submitted with values:', values);
     setLoading(true);

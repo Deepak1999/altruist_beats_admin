@@ -117,3 +117,7 @@
         transform: perspective(100px) rotate3d(1, var(--s, 1), 0, 360deg);
     }
 }
+
+.crt_task_btn_btm button:hover{
+    transform: scale(1) rotate(360deg);
+}

@@ -58,7 +58,6 @@ const Projects = ({ token, userId }) => {
     const [selectedUserNew, setSelectedUserNew] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // State to store users, initiators, and companies fetched from API
     const [usersNew, setUsersNew] = useState([]);
     const [initiators, setInitiators] = useState([]);
     const [companies, setCompanies] = useState([]);
@@ -401,15 +400,9 @@ const Projects = ({ token, userId }) => {
         else if (name === "user") setSelectedUserNew(value);
     };
 
-    // const handleUserChange = (e) => {
-    //     const selectedOptions = selectedOptions ? selectedOptions.map(option => option.email) : [];
-    //     setSelectedUserNew(selectedOptions);
-    // };
-
     const handleUserChange = (selectedOptions) => {
-        // Ensure the selected options are not undefined or null
         const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
-        setSelectedUsers(selectedEmails); // Store the selected emails
+        setSelectedUsers(selectedEmails);
     };
 
     const handleSubmit = async (e) => {
@@ -423,7 +416,7 @@ const Projects = ({ token, userId }) => {
             company,
             type,
             initiator,
-            users: selectedUsers // Assuming selectedUsers is an array
+            users: selectedUsers
         };
 
         try {
@@ -441,7 +434,6 @@ const Projects = ({ token, userId }) => {
                 const result = await response.json();
                 console.log("Form submitted successfully:", result);
 
-                // Display success message using SweetAlert
                 Swal.fire({
                     title: 'Success!',
                     text: 'Project created successfully.',
@@ -449,13 +441,10 @@ const Projects = ({ token, userId }) => {
                     confirmButtonText: 'OK'
                 });
 
-                // Close modal or reset form after success
-                setIsModalOpen(false);  // Assuming you're closing the modal here
+                setIsModalOpen(false);
             } else {
-                // If the response status is not OK, show an error message
                 console.error("Error submitting form:", response.statusText);
 
-                // Display error message using SweetAlert
                 Swal.fire({
                     title: 'Error!',
                     text: `Failed to create project: ${response.statusText}`,
@@ -464,10 +453,8 @@ const Projects = ({ token, userId }) => {
                 });
             }
         } catch (error) {
-            // Catch any other errors
             console.error("Error:", error);
 
-            // Display error message using SweetAlert for any unexpected errors
             Swal.fire({
                 title: 'Error!',
                 text: 'An unexpected error occurred. Please try again later.',
@@ -476,8 +463,6 @@ const Projects = ({ token, userId }) => {
             });
         }
     };
-
-
 
     const fetchData = async () => {
         const token = localStorage.getItem("jwttoken");
@@ -535,8 +520,8 @@ const Projects = ({ token, userId }) => {
 
     const userOptions = usersNew.map(user => ({
         value: user.id,
-        label: user.email, // Display email in the dropdown
-        email: user.email, // Store email as a separate field
+        label: user.email,
+        email: user.email,
     }));
 
     return (
@@ -552,14 +537,13 @@ const Projects = ({ token, userId }) => {
                 </p>
             ) : projects.length === 0 ? (
                 <p style={{ color: "var(--bs-secondary)", fontSize: "1.2rem" }}>
-                    No projects available.
+                    Loading projects....
                 </p>
             ) : (
                 <div
                     className="card shadow-none border bg_white mt-4"
                     style={{
                         backgroundColor: "#e5e5e5",
-
                         marginLeft: "-7px",
                         marginRight: "-7px",
                         width: "auto",
@@ -569,7 +553,6 @@ const Projects = ({ token, userId }) => {
                     <div
                         style={{
                             display: "flex",
-
                             flexWrap: "nowrap",
                             gap: "1.8rem",
                             overflowX: "auto",
@@ -860,9 +843,7 @@ const Projects = ({ token, userId }) => {
                                                     <a
                                                         onClick={(e) => {
                                                             setCurrentPopUpProjectId(project.projectId);
-
                                                             handleShow2(e);
-
                                                         }}
                                                         className="dropdown-item"
                                                         style={{
@@ -926,28 +907,34 @@ const Projects = ({ token, userId }) => {
                             <FaChevronRight />
                         </button>
 
-
-
-                        <div>
+                        <div className="crt_task_btn_btm" style={{
+                            position: 'fixed',
+                            right: '4%',
+                            bottom: '28%',
+                            zIndex: '9',
+                        }}>
                             {/* Button to trigger modal */}
                             <div>
-                                <button
+                                <button className="d-block rounded-pill"
                                     onClick={() => setIsModalOpen(true)}
                                     style={{
-                                        backgroundColor: "blue",
-                                        display: "flex",
+                                        backgroundColor: "#2cb7fd",
+                                        display: "fle",
                                         justifyContent: "flex-end",
                                         color: "white",
                                         padding: "10px",
                                         border: "none",
                                         cursor: "pointer",
+                                        width: "56px",
+                                        height: "56px",
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s',
                                     }}
                                 >
-                                    Create Project
+                                    <i className="fa-solid fa-plus"></i>
+
                                 </button>
                             </div>
 
-                            {/* Modal */}
                             {isModalOpen && (
                                 <div
                                     style={{
@@ -960,127 +947,120 @@ const Projects = ({ token, userId }) => {
                                         display: "flex",
                                         justifyContent: "center",
                                         alignItems: "center",
+                                        padding: '15px'
                                     }}
                                 >
-                                    <div
+                                    <div className="m-auto"
                                         style={{
                                             backgroundColor: "white",
                                             padding: "20px",
                                             borderRadius: "8px",
-                                            width: "400px",
+                                            width: "600px",
+                                            flex: '0 0 auto'
                                         }}
                                     >
                                         <h2>Create Project</h2>
                                         {loading && <p>Loading...</p>}
                                         {error && <p style={{ color: "red" }}>{error}</p>}
                                         <form onSubmit={handleSubmit}>
-                                            <div>
-                                                <label>Name:</label>
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    value={name}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div>
-                                                <label>Short Name:</label>
-                                                <input
-                                                    type="text"
-                                                    name="shortName"
-                                                    value={shortName}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-                                            <div>
-                                                <label>Company:</label>
-                                                <select name="company" value={company} onChange={handleInputChange} required>
-                                                    <option value="">Select Company</option>
-                                                    {companies.map((companyOption) => (
-                                                        <option key={companyOption.id} value={companyOption.name}>
-                                                            {companyOption.name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label>Type:</label>
-                                                <select name="type" value={type} onChange={handleInputChange} required>
-                                                    <option value="">Select Type</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label>Initiator:</label>
-                                                <select name="initiator" value={initiator} onChange={handleInputChange} required>
-                                                    <option value="">Select Initiator</option>
-                                                    {initiators.map((initiatorOption) => (
-                                                        <option key={initiatorOption.id} value={initiatorOption.email}>
-                                                            {initiatorOption.email}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            {/* <div>
-                                                <label>Users:</label>
-                                                <select
-                                                    name="users"
-                                                    value={selectedUserNew}
-                                                    onChange={handleInputChange}
-                                                    // multiple
-                                                    required
-                                                >
-                                                    <option value="">Select Users</option>
-                                                    {usersNew.map((userOption) => (
-                                                        <option key={userOption.id} value={userOption.id}>
-                                                            {userOption.email}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div> */}
+                                            <div className="row">
+                                                <div className="col-sm-6 my-1">
+                                                    <div>
+                                                        <label>Name:</label>
+                                                        <input className="form-control"
+                                                            type="text"
+                                                            name="name"
+                                                            value={name}
+                                                            onChange={handleInputChange}
+                                                            required
+                                                        />
+                                                    </div></div>
+                                                <div className="col-sm-6 my-1">
+                                                    <div>
+                                                        <label>Short Name:</label>
+                                                        <input className="form-control"
+                                                            type="text"
+                                                            name="shortName"
+                                                            value={shortName}
+                                                            onChange={handleInputChange}
+                                                            required
+                                                        />
+                                                    </div></div>
+                                                <div className="col-sm-6 my-1">
+                                                    <div>
+                                                        <label>Company:</label>
+                                                        <select className="form-select" name="company" value={company} onChange={handleInputChange} required>
+                                                            <option value="">Select Company</option>
+                                                            {companies.map((companyOption) => (
+                                                                <option key={companyOption.id} value={companyOption.name}>
+                                                                    {companyOption.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div></div>
+                                                <div className="col-sm-6 my-1">
+                                                    <div>
+                                                        <label>Type:</label>
+                                                        <select className="form-select" name="type" value={type} onChange={handleInputChange} required>
+                                                            <option value="">Select Type</option>
+                                                            <option value="1">1</option>
+                                                            <option value="2">2</option>
+                                                            <option value="3">3</option>
+                                                            <option value="4">4</option>
+                                                            <option value="5">5</option>
+                                                        </select>
+                                                    </div></div>
+                                                <div className="col-sm-6 my-1">
+                                                    <div>
+                                                        <label>Initiator:</label>
+                                                        <select className="form-select" name="initiator" value={initiator} onChange={handleInputChange} required>
+                                                            <option value="">Select Initiator</option>
+                                                            {initiators.map((initiatorOption) => (
+                                                                <option key={initiatorOption.id} value={initiatorOption.email}>
+                                                                    {initiatorOption.email}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div></div>
+                                                <div className="col-sm-6 my-1">
 
-                                            <div>
-                                                <label>Users:</label>
-                                                <Select
-                                                    isMulti
-                                                    name="users"
-                                                    options={userOptions}
-                                                    value={userOptions.filter(option =>
-                                                        selectedUsers.includes(option.email)
-                                                    )}
-                                                    onChange={handleUserChange}
-                                                    getOptionLabel={(e) => e.label}
-                                                    getOptionValue={(e) => e.value}
-                                                />
-                                                <div>
+                                                    <div>
+                                                        <label>Users:</label>
+                                                        <Select className="form-selet"
+                                                            isMulti
+                                                            name="users"
+                                                            options={userOptions}
+                                                            value={userOptions.filter(option =>
+                                                                selectedUsers.includes(option.email)
+                                                            )}
+                                                            onChange={handleUserChange}
+                                                            getOptionLabel={(e) => e.label}
+                                                            getOptionValue={(e) => e.value}
+                                                        />
+                                                        {/* <div>
                                                     <strong>Selected Users:</strong>
                                                     <p>{selectedUsers.join(", ")}</p>
-                                                </div>
-                                            </div>
+                                                </div> */}
+                                                    </div></div>
+                                                <div className="col-sm- my-1">
 
-                                            <div>
-                                                <button type="submit">Create</button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setIsModalOpen(false)}
-                                                    style={{ marginLeft: "10px" }}
-                                                >
-                                                    Cancel
-                                                </button>
+                                                    <div className="text-center">
+                                                        <button type="submit">Create</button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setIsModalOpen(false)}
+                                                            style={{ marginLeft: "10px" }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             )}
                         </div>
-
-
                     </div>
                 </div>
             )
@@ -1191,15 +1171,12 @@ const Projects = ({ token, userId }) => {
                                         style={{ marginBottom: "1rem" }}
                                     />
                                 </Grid>
-
                             </Grid>
                         )}
                     </DialogContent>
-
                 </div>
 
                 <DialogActions style={{ padding: "1.5rem 2rem" }}>
-
                     <Button
                         onClick={handleClose1}
                         variant="outlined"
@@ -1221,7 +1198,6 @@ const Projects = ({ token, userId }) => {
                 handleClose2={handleClose2}
                 fetchProjects={fetchProjects}
                 users={[]} />
-
             <Modal
                 show={showModal3}
                 onHide={() => setShowModal3(false)}
@@ -1299,7 +1275,6 @@ const Projects = ({ token, userId }) => {
                                 Approval Hierarchy
                             </h5>
                             <button
-
                                 onClick={(e) => { handleHierarchyClose(e); handleCloseModal(e) }}
                                 type="button"
                                 className="btn-close"
@@ -1391,7 +1366,6 @@ const Projects = ({ token, userId }) => {
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
-
                                                 <tbody>
                                                     {approvers.map((approver) => (
                                                         <tr key={approver.userId}>

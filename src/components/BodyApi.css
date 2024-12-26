@@ -45,7 +45,7 @@
 }
 
 .form-control {
-    padding: 10px;
+    /* padding: 10px; */
     border: 1px solid #dfe4ea;
     border-radius: 5px;
     transition: border-color 0.2s ease;

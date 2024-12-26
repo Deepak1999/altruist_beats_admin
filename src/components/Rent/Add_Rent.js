@@ -127,8 +127,9 @@ const Add_Rent = () => {
     }
 
     return (
-        <div className='table-responsive'>
-            <table {...getTableProps()} border="1" style={{ width: "auto", height: "auto", textAlign: "left", }}>
+        <div className='px-3'>
+        <div className='table-responsive px-'>
+            <table {...getTableProps()} border="1" style={{ height: "auto", textAlign: "left", }}>
                 <thead style={{ textAlign: "center", backgroundColor: "lightcyan" }}>
                     {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
@@ -261,7 +262,7 @@ const Add_Rent = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </div></div>
     );
 };
 

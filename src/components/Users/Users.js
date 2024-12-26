@@ -344,7 +344,7 @@ const Users = () => {
     };
 
 
-   
+
     const colors = [
         "#282f37", // Light Blue (lighter than #0199ec)
         "#247caa", // Light Indigo (lighter than #0504b8)
@@ -406,7 +406,7 @@ const Users = () => {
     };
 
     const [selectedEmail, setSelectedEmail] = useState("");
-       const handleAddProjectClick = (email) => {
+    const handleAddProjectClick = (email) => {
         setSelectedEmail(email);
     };
 
@@ -464,7 +464,7 @@ const Users = () => {
     };
 
     return (
-        <div style={{ padding: "20px", backgroundColor: "#f8f9fa" }}>
+        <div style={{ padding: "20px", backgroundColor: "#f8f9fa", minHeight: 'calc(100vh - 84px)' }}>
             <div
                 style={{
                     backgroundColor: "#e5e5e5",
@@ -507,7 +507,7 @@ const Users = () => {
                             <span
                                 key={user.id}
                                 style={styles}
-                                
+
                                 title={user.name || "User"}
                             >
                                 {user.name?.charAt(0) || "U"}
@@ -776,7 +776,7 @@ const Users = () => {
                     {error}
                 </div>
             )}
-        <Dialog open={showModal1} onClose={handleClose1} fullWidth maxWidth="xl" style={{ maxWidth: '1088px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <Dialog open={showModal1} onClose={handleClose1} fullWidth maxWidth="xl" style={{ maxWidth: '1088px', marginLeft: 'auto', marginRight: 'auto' }}>
                 <DialogTitle style={{ backgroundColor: '#0d6efd', color: 'white', padding: '1rem 1.5rem', fontSize: '1.5rem', fontWeight: '600' }}>
                     Update User
                 </DialogTitle>
@@ -896,28 +896,28 @@ const Users = () => {
                 <DialogContent>
                     <form>
                         <div className="row">
-                        <div className="col-6">
-                        <TextField
-                            label="New Password"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                        /></div>
-                        <div className="col-6">
-                        <TextField
-                            label="Confirm Password"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
+                            <div className="col-6">
+                                <TextField
+                                    label="New Password"
+                                    type="password"
+                                    fullWidth
+                                    margin="normal"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                /></div>
+                            <div className="col-6">
+                                <TextField
+                                    label="Confirm Password"
+                                    type="password"
+                                    fullWidth
+                                    margin="normal"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
                         </div>
-</div>
                     </form>
                 </DialogContent>
                 <DialogActions>
@@ -947,99 +947,99 @@ const Users = () => {
                             <div className="row">
                                 <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
                                     {/* <div className="col-md-7 search-container"> */}
-                                        <form action="/action_page.php" className="search-bar-form d-flex mx-auto" style={{width:"251px"}}>
-                                            <input className="form-control" type="text" placeholder="Search.." name="search" />
-                                            <button className="m-0" type="submit">
-                                                <i className="fa fa-search"></i>
-                                            </button>
-                                        </form>
+                                    <form action="/action_page.php" className="search-bar-form d-flex mx-auto" style={{ width: "251px" }}>
+                                        <input className="form-control" type="text" placeholder="Search.." name="search" />
+                                        <button className="m-0" type="submit">
+                                            <i className="fa fa-search"></i>
+                                        </button>
+                                    </form>
                                     {/* </div> */}
                                 </div>
                                 <div className="col-md-6 my-2">
-                                        <div
-                                            className="card p-0 w-100 h-100 m-0"
-                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "25rem"}}
-                                        >
-                                            <div className="table-responsive" style={{
-                                                maxHeight: "300px", 
-                                                overflowY: "auto", 
-                                                border: "1px solid #ddd", 
-                                            }}>
-                                                <table className="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                            <th>#</th>
-                                                            <th>Name</th>
-                                                            <th>Company</th>
-                                                            <th>Type</th>
-                                                            <th>Created By</th>
-                                                        </tr>
-                                                    </thead>
+                                    <div
+                                        className="card p-0 w-100 h-100 m-0"
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "25rem" }}
+                                    >
+                                        <div className="table-responsive" style={{
+                                            maxHeight: "300px",
+                                            overflowY: "auto",
+                                            border: "1px solid #ddd",
+                                        }}>
+                                            <table className="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>#</th>
+                                                        <th>Name</th>
+                                                        <th>Company</th>
+                                                        <th>Type</th>
+                                                        <th>Created By</th>
+                                                    </tr>
+                                                </thead>
 
-                                                    <tbody>
-                                                        {unassignedProjects && unassignedProjects.length > 0 ? (
-                                                            unassignedProjects.map((project, index) => (
-                                                                <tr key={project.id}>
-                                                                    <td>
-                                                                        <input
-                                                                            type="checkbox"
-                                                                              onChange={(e) => handleCheckboxChange(e, project.id)}
-                      
-                                                                              />
-                                                                    </td>
-                                                                    <td>{index + 1}</td>
-                                                                    <td>{project.name}</td>
-                                                                    <td>{project.businessCompany || "N/A"}</td>
-                                                                    <td>{project.ptype || "N/A"}</td>
-                                                                    <td>{project.createdBy || "N/A"}</td>
+                                                <tbody>
+                                                    {unassignedProjects && unassignedProjects.length > 0 ? (
+                                                        unassignedProjects.map((project, index) => (
+                                                            <tr key={project.id}>
+                                                                <td>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        onChange={(e) => handleCheckboxChange(e, project.id)}
 
-                                                                </tr>
-                                                            ))
-                                                        ) : (
-                                                            <tr>
-                                                                <td colSpan="5">No unassigned projects available.</td>
+                                                                    />
+                                                                </td>
+                                                                <td>{index + 1}</td>
+                                                                <td>{project.name}</td>
+                                                                <td>{project.businessCompany || "N/A"}</td>
+                                                                <td>{project.ptype || "N/A"}</td>
+                                                                <td>{project.createdBy || "N/A"}</td>
+
                                                             </tr>
-                                                        )}
-                                                    </tbody>
-                                                </table>
+                                                        ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan="5">No unassigned projects available.</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
 
-                                            </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-6 my-2">
-                                        <div
-                                            className="card p-0 w-100 h-100"
-                                            style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "20rem" }}
-                                        >
-                                            <div className="table-responsive" style={{
-                                                maxHeight: "300px", // Set the height you want
-                                                overflowY: "auto",  // Enable vertical scrolling
-                                                border: "1px solid #ddd", // Optional: Add a border for clarity
-                                            }}>
-                                                <table className="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Assigned Project(s)</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {projects && projects.length > 0 ? (
-                                                            projects.map((project, index) => (
-                                                                <tr key={index}>
-                                                                    <td>{project.projectName}</td>
-                                                                </tr>
-                                                            ))
-                                                        ) : (
-                                                            <tr>
-                                                                <td>No assigned projects available.</td>
+                                </div>
+                                <div className="col-md-6 my-2">
+                                    <div
+                                        className="card p-0 w-100 h-100"
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "20rem" }}
+                                    >
+                                        <div className="table-responsive" style={{
+                                            maxHeight: "300px", // Set the height you want
+                                            overflowY: "auto",  // Enable vertical scrolling
+                                            border: "1px solid #ddd", // Optional: Add a border for clarity
+                                        }}>
+                                            <table className="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Assigned Project(s)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {projects && projects.length > 0 ? (
+                                                        projects.map((project, index) => (
+                                                            <tr key={index}>
+                                                                <td>{project.projectName}</td>
                                                             </tr>
-                                                        )}
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td>No assigned projects available.</td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
+                                </div>
                             </div>
                             {/* Table inside modal */}
                             {/* <div className="row mt-3">
@@ -1050,7 +1050,7 @@ const Users = () => {
                         </div>
                         <div
                             className="modal-footer d-flex justify-content-center"
-                            style={{ border: "none",marginLeft:"-99px" }}
+                            style={{ border: "none", marginLeft: "-99px" }}
                         >
                             <button
                                 type="button"
@@ -1100,10 +1100,10 @@ const Users = () => {
 
             <div className={`modal fade ${showModal4 ? "show" : ""}`} style={{ display: showModal4 ? "block" : "none" }}>
                 <div className="modal-dialog modal-lg">
-                    <div className="modal-content" style={{width:"700px"}}>
+                    <div className="modal-content" style={{ width: "700px" }}>
                         <div className="modal-header" style={{ background: "#2cb7fd", color: "white" }}>
                             <h5 className="modal-title" id="addUserModalLabel">
-                               Remove Project
+                                Remove Project
                             </h5>
                             <button type="button" className="btn-close" onClick={handleClose4}></button>
                         </div>
@@ -1111,19 +1111,19 @@ const Users = () => {
                             <div className="row">
                                 <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
                                     {/* <div className="col-md-7 search-container"> */}
-                                        <form action="/action_page.php"
-                                            className="search-bar-form d-flex mx-auto" style={{width:"251px"}}>
-                                            <input className="form-control" type="text" placeholder="Search.." name="search" />
-                                            <button className="m-0" type="submit">
-                                                <i className="fa fa-search"></i>
-                                            </button>
-                                        </form>
+                                    <form action="/action_page.php"
+                                        className="search-bar-form d-flex mx-auto" style={{ width: "251px" }}>
+                                        <input className="form-control" type="text" placeholder="Search.." name="search" />
+                                        <button className="m-0" type="submit">
+                                            <i className="fa fa-search"></i>
+                                        </button>
+                                    </form>
                                     {/* </div> */}
                                 </div>
                                 <div className="col-md-6 mx-auto my-2">
                                     <div
                                         className="card w-100 h-100 m-0"
-                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "27rem",marginLeft:"-139px" }}
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "27rem", marginLeft: "-139px" }}
                                     >
                                         <div className="table-responsive" style={{
                                             maxHeight: "300px", // Set the height you want

@@ -232,8 +232,8 @@ const NavBar = () => {
 
             {/* Conditional Sub Tabs Rendering */}
             {activeMainTab === 'file-management' && (
-                <Tab.Container activeKey={activeSubTab} className="my-tab">
-                    <NavTabs variant="tabs" className="justify-content-center my-3">
+                <Tab.Container activeKey={activeSubTab} className="my-tab px-">
+                    <NavTabs variant="tabs" className="justify-content-center px-3 my-3">
                         {/* <NavTabs.Item>
                             <NavTabs.Link eventKey="create-projects" onClick={() => handleSubTabSelect('create-projects')} style={{ marginLeft: "40px" }}>
                                 Create Projects
