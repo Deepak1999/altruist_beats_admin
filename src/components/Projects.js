@@ -139,7 +139,7 @@ const Projects = ({ token, userId }) => {
 
     const handleNextPage = () => {
         if (currentPage * itemsPerPage < projects.length) {
-            setCurrentPage(currentPage + 50);
+            setCurrentPage(currentPage + 1);
         }
     };
 
