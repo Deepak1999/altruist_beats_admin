@@ -9,6 +9,7 @@ import RemoveUserModal from "./RemoveUserModal";
 import AddOrViewUsersModal from "./AddOrViewUsersModal";
 import Select from "react-select";
 import Swal from 'sweetalert2';
+import { Tooltip } from 'react-tooltip';
 import './Projects.css';
 
 const Projects = ({ token, userId }) => {
@@ -914,7 +915,7 @@ const Projects = ({ token, userId }) => {
                             zIndex: '9',
                         }}>
                             {/* Button to trigger modal */}
-                            <div>
+                            {/* <div>
                                 <button className="d-block rounded-pill"
                                     onClick={() => setIsModalOpen(true)}
                                     style={{
@@ -933,6 +934,30 @@ const Projects = ({ token, userId }) => {
                                     <i className="fa-solid fa-plus"></i>
 
                                 </button>
+                            </div> */}
+
+                            <div>
+                                <button
+                                    className="d-block rounded-pill"
+                                    onClick={() => setIsModalOpen(true)}
+                                    style={{
+                                        backgroundColor: "#2cb7fd",
+                                        display: "flex",  // Fixed typo from 'fle' to 'flex'
+                                        justifyContent: "flex-end",
+                                        color: "white",
+                                        padding: "10px",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        width: "56px",
+                                        height: "56px",
+                                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s',
+                                    }}
+                                    data-tooltip-id="addItemTooltip"
+                                >
+                                    <i className="fa-solid fa-plus"></i>
+                                </button>
+
+                                <Tooltip id="addItemTooltip" place="top" content="Create Project" />
                             </div>
 
                             {isModalOpen && (
