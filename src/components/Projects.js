@@ -943,7 +943,7 @@ const Projects = ({ token, userId }) => {
                                     onClick={() => setIsModalOpen(true)}
                                     style={{
                                         backgroundColor: "#2cb7fd",
-                                        display: "flex",  // Fixed typo from 'fle' to 'flex'
+                                        display: "flex",
                                         justifyContent: "flex-end",
                                         color: "white",
                                         padding: "10px",
