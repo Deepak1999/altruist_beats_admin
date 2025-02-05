@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Select from "react-select"; // Import react-select
+import Select from "react-select";
+import Api_base_url from "./Api_base_url/Api_base_url";
 
 const CreateProjectModal = () => {
-    // State to manage modal visibility
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // State for form fields
     const [name, setName] = useState("");
     const [shortName, setShortName] = useState("");
     const [company, setCompany] = useState("");
     const [type, setType] = useState("");
     const [initiator, setInitiator] = useState("");
-    const [selectedUsers, setSelectedUsers] = useState([]); // Store selected users as an array
+    const [selectedUsers, setSelectedUsers] = useState([]);
 
-    // State to store users fetched from API
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
-    // Fetch users from API
     const fetchUsers = async () => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
 
         try {
             const response = await axios.get(
-                "http://192.168.167.5:8560/api/users/all/user",
+                `${Api_base_url}/api/users/all/user`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -36,7 +33,7 @@ const CreateProjectModal = () => {
             );
 
             if (response.status === 200) {
-                setUsers(response.data.users); // Assuming the response has 'users' field
+                setUsers(response.data.users);
             } else {
                 setError("No users found.");
             }
@@ -48,14 +45,11 @@ const CreateProjectModal = () => {
         }
     };
 
-    // Handle user selection change in react-select
     const handleUserChange = (selectedOptions) => {
-        // Get selected email addresses
         const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
         setSelectedUsers(selectedEmails);
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -65,7 +59,7 @@ const CreateProjectModal = () => {
             company,
             type,
             initiator,
-            users: selectedUsers.join(",") // Join emails with a comma before sending
+            users: selectedUsers.join(",")
         };
 
         try {
@@ -80,7 +74,7 @@ const CreateProjectModal = () => {
             if (response.ok) {
                 const result = await response.json();
                 console.log("Form submitted successfully:", result);
-                setIsModalOpen(false); // Close modal after successful submission
+                setIsModalOpen(false);
             } else {
                 console.error("Error submitting form:", response.statusText);
             }
@@ -89,12 +83,10 @@ const CreateProjectModal = () => {
         }
     };
 
-    // Call fetchUsers on component mount
     useEffect(() => {
         fetchUsers();
     }, []);
 
-    // Prepare options for react-select
     const userOptions = users.map(user => ({
         value: user.id,
         label: user.email,
@@ -103,7 +95,6 @@ const CreateProjectModal = () => {
 
     return (
         <div>
-            {/* Button to trigger modal */}
             <div>
                 <button
                     onClick={() => setIsModalOpen(true)}
@@ -203,7 +194,6 @@ const CreateProjectModal = () => {
                                     required
                                 >
                                     <option value="">Select Initiator</option>
-                                    {/* Map initiators here */}
                                 </select>
                             </div>
                             <div>
@@ -216,8 +206,8 @@ const CreateProjectModal = () => {
                                         selectedUsers.includes(option.email)
                                     )}
                                     onChange={handleUserChange}
-                                    getOptionLabel={(e) => e.label} // Display the email in the dropdown
-                                    getOptionValue={(e) => e.value} // Use user ID as the value
+                                    getOptionLabel={(e) => e.label}
+                                    getOptionValue={(e) => e.value}
                                 />
                             </div>
                             <div>

@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Navbar.css';
 import profileIcon from '../assests/profile.png';
 import beats from '../assests/beats.png';
+import Api_base_url from './Api_base_url/Api_base_url';
 
 const NavBar = () => {
     const [activeMainTab, setActiveMainTab] = useState('file-management');
@@ -42,7 +43,7 @@ const NavBar = () => {
         }
 
         try {
-            const response = await axios.delete('http://192.168.167.5:8560/auth/logout', {
+            const response = await axios.delete(`${Api_base_url}/auth/logout`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'userId': userId,
@@ -84,15 +85,19 @@ const NavBar = () => {
         }
         else if (tab === 'projects') {
             setActiveSubTab('projects');
-            navigate('/projects');  // Navigate to update-multiple-hierarchy on selecting Hierarchy Management
+            navigate('/projects');
         }
         else if (tab === 'users') {
             setActiveSubTab('users');
-            navigate('/users');  // Navigate to update-multiple-hierarchy on selecting Hierarchy Management
+            navigate('/users');
         }
         else if (tab === 'add-rent') {
             setActiveSubTab('add-rent');
-            navigate('/add-rent');  // Navigate to update-multiple-hierarchy on selecting Hierarchy Management
+            navigate('/add-rent');
+        }
+        else if (tab === 'announcement') {
+            setActiveSubTab('announcement');
+            navigate('/announcement');
         }
     };
 
@@ -185,6 +190,9 @@ const NavBar = () => {
                         </Nav.Link>
                         <Nav.Link onClick={() => handleMainTabSelect('add-rent')} active={activeMainTab === 'add-rent'} style={{ marginLeft: '-90px' }}>
                             Rent Agreements Management
+                        </Nav.Link>
+                        <Nav.Link onClick={() => handleMainTabSelect('announcement')} active={activeMainTab === 'announcement'} style={{ marginLeft: '-90px' }}>
+                            Email Announcement
                         </Nav.Link>
                     </Nav>
                     <Nav>

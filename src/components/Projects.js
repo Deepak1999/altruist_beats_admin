@@ -11,6 +11,7 @@ import Select from "react-select";
 import Swal from 'sweetalert2';
 import { Tooltip } from 'react-tooltip';
 import './Projects.css';
+import Api_base_url from "./Api_base_url/Api_base_url";
 
 const Projects = ({ token, userId }) => {
     const [projects, setProjects] = useState([]);
@@ -70,7 +71,7 @@ const Projects = ({ token, userId }) => {
 
     const fetchProjects = async (token, userId) => {
         try {
-            const response = await axios.get("http://192.168.167.5:8560/api/project/get/projectusers", {
+            const response = await axios.get(`${Api_base_url}/api/project/get/projectusers`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     userId: userId,
@@ -104,7 +105,7 @@ const Projects = ({ token, userId }) => {
             }));
 
             const response = await axios.post(
-                "http://192.168.167.5:8560/api/project-users/add-singleproject-users",
+                `${Api_base_url}/api/project-users/add-singleproject-users`,
                 usersToAdd,
                 {
                     headers: {
@@ -167,7 +168,7 @@ const Projects = ({ token, userId }) => {
 
         try {
             const response = await axios.post(
-                "http://192.168.167.5:8560/api/project/get/approvers",
+                `${Api_base_url}/api/project/get/approvers`,
                 { projectId: currentPopUpProjectId },
                 {
                     headers: {
@@ -201,7 +202,7 @@ const Projects = ({ token, userId }) => {
 
         try {
             const response = await axios.post(
-                "http://192.168.167.5:8560/api/users/searchUser",
+                `${Api_base_url}/api/users/searchUser`,
                 { searchTerm },
                 {
                     headers: {
@@ -256,7 +257,7 @@ const Projects = ({ token, userId }) => {
         setShowModal(true);
 
         try {
-            const response = await axios.get("http://192.168.167.5:8560/api/users/all/user", {
+            const response = await axios.get(`${Api_base_url}/api/users/all/user`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     userId: userId,
@@ -313,7 +314,7 @@ const Projects = ({ token, userId }) => {
         try {
             setLoading(true);
             const response = await axios.get(
-                `http://192.168.167.5:8560/api/project/projects/${projectId}`,
+                `${Api_base_url}/api/project/projects/${projectId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -367,7 +368,7 @@ const Projects = ({ token, userId }) => {
 
         try {
             const response = await axios.get(
-                `http://192.168.167.5:8560/api/users/non/users/${currentPopUpProjectId}`,
+                `${Api_base_url}/api/users/non/users/${currentPopUpProjectId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -421,7 +422,7 @@ const Projects = ({ token, userId }) => {
         };
 
         try {
-            const response = await fetch("http://192.168.167.5:8560/api/project/create-single-project", {
+            const response = await fetch(`${Api_base_url}/api/project/create-single-project`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -471,7 +472,7 @@ const Projects = ({ token, userId }) => {
 
         try {
             const userResponse = await axios.get(
-                "http://192.168.167.5:8560/api/users/all/user",
+                `${Api_base_url}/api/users/all/user`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -481,7 +482,7 @@ const Projects = ({ token, userId }) => {
             );
 
             const initiatorResponse = await axios.get(
-                "http://192.168.167.5:8560/api/users/all/user",
+                `${Api_base_url}/api/users/all/user`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -491,7 +492,7 @@ const Projects = ({ token, userId }) => {
             );
 
             const companyResponse = await axios.get(
-                "http://192.168.167.5:8560/api/project/get/companies",
+                `${Api_base_url}/api/project/get/companies`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

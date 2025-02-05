@@ -21,6 +21,7 @@ import Add_Rent from './components/Rent/Add_Rent';
 import Projects from './components/Projects';
 import Users from './components/Users/Users';
 import 'font-awesome/css/font-awesome.min.css';
+import EmailAnnouncement from './components/Announcements/EmailAnnouncement';
 
 
 const Layout = ({ children }) => {
@@ -54,6 +55,7 @@ const App = () => {
           <Route path="/" element={<LoginPage />} />
           <Route path="/projects" element={<Projects />} />
           <Route path='/add-rent' element={<Add_Rent />} />
+          <Route path='/announcement' element={<EmailAnnouncement />} />
           <Route path="/home-page" element={<HomePage />} />
           <Route path="/create-projects" element={<PostCreateProjects />} />
           <Route path="/update-project-hierarchy" element={<UpdateProjectHierarchy />} />
