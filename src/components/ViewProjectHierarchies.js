@@ -5,12 +5,14 @@ import { Button, Spinner, Card } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import './BodyApi.css';
 import { useNavigate } from 'react-router-dom';
+import Api_base_url from './Api_base_url/Api_base_url';import HomeButton from "./HomeButton"
 
+       import HomeIcon from '@mui/icons-material/Home';
 const ViewProjectHierarchies = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [siteIds, setSiteIds] = useState([]);
-
+const ho = localStorage.getItem("home");
   useEffect(() => {
     const token = localStorage.getItem('jwttoken');
     const userId = localStorage.getItem('id');
@@ -22,7 +24,7 @@ const ViewProjectHierarchies = () => {
     const fetchSiteIds = async () => {
       try {
         const response = await fetch(
-          'http://192.168.167.5:8560/api/project/get/project/siteIds',
+          `${Api_base_url}/api/project/get/project/siteIds`,
           {
             method: 'GET',
             headers: {
@@ -77,7 +79,7 @@ const ViewProjectHierarchies = () => {
 
     try {
       const response = await axios.post(
-        'http://192.168.167.5:8560/api/project/create/RentAgreement',
+        `${Api_base_url}/api/project/create/RentAgreement`,
         formData,
         {
           headers: {
@@ -176,7 +178,9 @@ const ViewProjectHierarchies = () => {
 
   return (
     <div className="containe px-4 pb-4 mt-4">
+     <HomeButton ho={ho} />
       <Card className="p- card-1-v card p-0">
+   
         <div className="label" style={{ marginTop: '-18px', position: 'static' }}>
           <h6>Add New Agreement</h6>
         </div>
@@ -291,8 +295,8 @@ const ViewProjectHierarchies = () => {
                     <Field as="select" name="siteId" className="form-control">
                       <option value="">Select Site ID</option>
                       {Array.isArray(siteIds) &&
-                        siteIds.map((siteId) => (
-                          <option key={siteId} value={siteId}>
+                        siteIds.map((siteId,s) => (
+                          <option key={s} value={siteId}>
                             {siteId}
                           </option>
                         ))}

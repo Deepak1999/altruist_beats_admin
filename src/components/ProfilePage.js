@@ -250,6 +250,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Projects.css';
+// import axiosInstance from '../utils/axiosInstance';
 
 const Projects = () => {
     const navigate = useNavigate();
@@ -270,12 +271,14 @@ const Projects = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const response = await axios.get('/api/project/get/projectusers', {
+                const response = await axios.get('${Api_base_url}/api/project/get/projectusers'
+                , {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'User-Id': userId,
                     },
-                });
+                }
+                );
                 setProjects(response.data);
                 setLoading(false);
             } catch (error) {

@@ -9,6 +9,7 @@ import beats from '../assests/beats.png';
 import Api_base_url from './Api_base_url/Api_base_url';
 
 const NavBar = () => {
+    const ro = localStorage.getItem('roleId');
     const [activeMainTab, setActiveMainTab] = useState('file-management');
     const [activeSubTab, setActiveSubTab] = useState('create-projects');
     const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -60,6 +61,8 @@ const NavBar = () => {
             localStorage.removeItem('id');
             localStorage.removeItem('username');
             localStorage.removeItem('password');
+            localStorage.removeItem('roleId');
+            localStorage.removeItem('home');
             console.log('Logout successful, token and userId removed');
             navigate('/');
         } catch (error) {
@@ -99,6 +102,10 @@ const NavBar = () => {
             setActiveSubTab('announcement');
             navigate('/announcement');
         }
+        else if (tab === 'hierarchy') {
+            setActiveSubTab('hierarchy');
+            navigate('/UpdateSingleHierarchy');
+        }
     };
 
     const handleSubTabSelect = (tab) => {
@@ -134,6 +141,24 @@ const NavBar = () => {
             case 'update':
                 navigate('/view-project-hierarchies');
                 break;
+            case 'UpdateSingleHierarchy':
+                navigate('/UpdateSingleHierarchy');
+                break;
+            case 'ReplaceHierarchy':
+                navigate('/ReplaceHierarchy');
+                break;
+            case 'ReferenceHierarchy':
+                navigate('/ReferenceHierarchy');
+                break;
+            case 'CreateProjects':
+                navigate('/CreateProjects');
+                break;
+            case 'BulkUpdateProjectHierarchy':
+                navigate('/BulkUpdateProjectHierarchy');
+                break;
+            case 'BulkReplaceProjectHierarchy':
+                navigate('/BulkReplaceProjectHierarchy');
+                break;
             default:
                 break;
         }
@@ -157,6 +182,8 @@ const NavBar = () => {
             setActiveSubTab('update-multiple-hierarchy');
         }
     }, [location.pathname]);
+    console.log("Current Hash:", window.location.hash);
+
 
     return (
         <>
@@ -172,7 +199,7 @@ const NavBar = () => {
                 }} />
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
+                    <Nav className="mr-auto ms-0 gap-2">
                         {/* <Nav.Link onClick={() => handleMainTabSelect('file-management')} active={activeMainTab === 'file-management'} style={{ marginLeft: '-90px' }}>
                             File Management
                         </Nav.Link> */}
@@ -182,18 +209,127 @@ const NavBar = () => {
                         {/* <Nav.Link onClick={() => handleMainTabSelect('hierarchy-management')} active={activeMainTab === 'hierarchy-management'} style={{ marginLeft: '-90px' }}>
                             Hierarchy Management
                         </Nav.Link> */}
-                        <Nav.Link onClick={() => handleMainTabSelect('projects')} active={activeMainTab === 'projects'} style={{ marginLeft: '-200px' }}>
-                            Projects
-                        </Nav.Link>
-                        <Nav.Link onClick={() => handleMainTabSelect('users')} active={activeMainTab === 'users'} style={{ marginLeft: '-90px' }}>
-                            Users Management
-                        </Nav.Link>
-                        <Nav.Link onClick={() => handleMainTabSelect('add-rent')} active={activeMainTab === 'add-rent'} style={{ marginLeft: '-90px' }}>
-                            Rent Agreements Management
-                        </Nav.Link>
-                        <Nav.Link onClick={() => handleMainTabSelect('announcement')} active={activeMainTab === 'announcement'} style={{ marginLeft: '-90px' }}>
-                            Email Announcement
-                        </Nav.Link>
+                        {ro === "2" ? (
+                            <>
+
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('projects')}
+                                    style={{
+
+                                        color: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "white" : "white",
+                                        borderRadius:(window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "7px" : "none",
+                                        border:(window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "1px solid white" : "none",
+
+
+                                    }}
+                                    active={activeMainTab === 'projects'}>
+                                    Projects
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('users')}
+
+                                    style={{
+
+
+                                        color: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "7px" : "none",
+                                        border: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "1px solid white" : "none",
+
+
+                                    }}
+                                    active={activeMainTab === 'users'}>
+                                    Users Management
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('hierarchy')}
+
+                                    style={{
+
+                                        color: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "7px" : "none",
+                                        border: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "1px solid white" : "none",
+
+
+                                    }}
+
+                                    active={activeMainTab === 'hierarchy'}>
+                                    Hierarchy Management
+
+                                </Nav.Link>
+                            </>
+                        ) : (
+                            <>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('projects')}
+                                    style={{
+
+                                        color: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "7px" : "none",
+                                        border: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "1px solid white" : "none",
+
+
+                                    }}
+                                    active={activeMainTab === 'projects'}>
+                                    Projects
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('users')}
+
+                                    style={{
+
+                                        color: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "7px" : "none",
+                                        border: (window.location.hash === "#/users" || window.location.hash === "#/sign-up-users") ? "1px solid white" : "none",
+
+
+                                    }}
+                                    active={activeMainTab === 'users'}>
+                                    Users Management
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('add-rent')}
+
+                                    style={{
+
+                                        color: (window.location.hash === "#/add-rent" || window.location.hash === "#/view-project-hierarchies") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/add-rent" || window.location.hash === "#/view-project-hierarchies") ? "7px" : "none",
+                                        border: (window.location.hash === "#/add-rent" || window.location.hash === "#/view-project-hierarchies") ? "1px solid white" : "none",
+
+
+                                    }}
+
+
+                                    active={activeMainTab === 'add-rent'}>
+                                    Rent Agreements Management
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('announcement')}
+
+                                    style={{
+
+                                        color: window.location.hash === "#/announcement" ? "white" : "white",
+                                        borderRadius: window.location.hash === "#/announcement" ? "7px" : "none",
+                                        border: window.location.hash === "#/announcement" ? "1px solid white" : "none",
+
+
+                                    }}
+
+                                    active={activeMainTab === 'announcement'}>
+                                    Email Announcement
+                                </Nav.Link>
+                                <Nav.Link className='m-0' onClick={() => handleMainTabSelect('hierarchy')}
+
+                                    style={{
+
+
+                                        color: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "white" : "white",
+                                        borderRadius: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "7px" : "none",
+                                        border: (window.location.hash === "#/UpdateSingleHierarchy" || window.location.hash === "#/ReplaceHierarchy" || window.location.hash === "#/ReferenceHierarchy" || window.location.hash === "#/CreateProjects" || window.location.hash === "#/BulkUpdateProjectHierarchy" || window.location.hash === "#/BulkReplaceProjectHierarchy") ? "1px solid white" : "none",
+
+
+                                    }}
+
+                                    active={activeMainTab === 'hierarchy'}>
+                                    Hierarchy Management
+
+                                </Nav.Link>
+                            </>)}
+
+
+
                     </Nav>
                     <Nav>
                         {isLoggedIn ? (
@@ -225,7 +361,7 @@ const NavBar = () => {
                                     />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => navigate('/profile')}>Profile</Dropdown.Item>
+                                    {/* <Dropdown.Item onClick={() => navigate('/profile')}>Profile</Dropdown.Item> */}
                                     <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -236,13 +372,14 @@ const NavBar = () => {
                         )}
                     </Nav>
                 </Navbar.Collapse>
-            </Navbar>
+            </Navbar >
 
             {/* Conditional Sub Tabs Rendering */}
-            {activeMainTab === 'file-management' && (
-                <Tab.Container activeKey={activeSubTab} className="my-tab px-">
-                    <NavTabs variant="tabs" className="justify-content-center px-3 my-3">
-                        {/* <NavTabs.Item>
+            {
+                activeMainTab === 'file-management' && (
+                    <Tab.Container activeKey={activeSubTab} className="my-tab px-">
+                        <NavTabs variant="tabs" className="justify-content-center px-3 my-3">
+                            {/* <NavTabs.Item>
                             <NavTabs.Link eventKey="create-projects" onClick={() => handleSubTabSelect('create-projects')} style={{ marginLeft: "40px" }}>
                                 Create Projects
                             </NavTabs.Link>
@@ -257,65 +394,221 @@ const NavBar = () => {
                                 Add Project Users
                             </NavTabs.Link>
                         </NavTabs.Item> */}
-                    </NavTabs>
-                </Tab.Container>
-            )}
+                        </NavTabs>
+                    </Tab.Container>
+                )
+            }
 
-            {activeMainTab === 'users-management' && (
-                <Tab.Container activeKey={activeSubTab}>
-                    <NavTabs variant="tabs" className="justify-content-center my-3">
-                        <NavTabs.Item>
-                            <NavTabs.Link eventKey="sign-up-users" onClick={() => handleSubTabSelect('sign-up-users')} style={{ marginLeft: "120px" }}>
-                                Sign Up Users
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                        <NavTabs.Item>
-                            <NavTabs.Link eventKey="create-single-project" onClick={() => handleSubTabSelect('create-single-project')}>
-                                Create Single Project
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                        <NavTabs.Item>
-                            <NavTabs.Link eventKey="add-multiple-project-users" onClick={() => handleSubTabSelect('add-multiple-project-users')}>
-                                Add Single/Multiple Project Users
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                    </NavTabs>
-                </Tab.Container>
-            )}
+            {
+                activeMainTab === 'users-management' && (
+                    <Tab.Container activeKey={activeSubTab}>
+                        <NavTabs variant="tabs" className="justify-content-center my-3">
+                            <NavTabs.Item>
+                                <NavTabs.Link eventKey="sign-up-users" onClick={() => handleSubTabSelect('sign-up-users')} style={{ marginLeft: "120px" }}>
+                                    Sign Up Users
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                            <NavTabs.Item>
+                                <NavTabs.Link eventKey="create-single-project" onClick={() => handleSubTabSelect('create-single-project')}>
+                                    Create Single Project
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                            <NavTabs.Item>
+                                <NavTabs.Link eventKey="add-multiple-project-users" onClick={() => handleSubTabSelect('add-multiple-project-users')}>
+                                    Add Single/Multiple Project Users
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                        </NavTabs>
+                    </Tab.Container>
+                )
+            }
 
-            {activeMainTab === 'hierarchy-management' && (
-                <Tab.Container activeKey={activeSubTab}>
-                    <NavTabs variant="tabs" className="justify-content-center my-3">
-                        <NavTabs.Item>
-                            <NavTabs.Link eventKey="update-multiple-hierarchy" onClick={() => handleSubTabSelect('update-multiple-hierarchy')} style={{ marginLeft: "-40px" }}>
-                                Update Multiple Hierarchy
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                        <NavTabs.Item>
-                            <NavTabs.Link eventKey="view-project-hierarchies" onClick={() => handleSubTabSelect('view-project-hierarchies')}>
-                                View Project Hierarchies
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                    </NavTabs>
-                </Tab.Container>
-            )}
+            {
+                activeMainTab === 'hierarchy-management' && (
+                    <Tab.Container activeKey={activeSubTab}>
+                        <NavTabs variant="tabs" className="justify-content-center my-3">
+                            <NavTabs.Item>
+                                <NavTabs.Link eventKey="update-multiple-hierarchy" onClick={() => handleSubTabSelect('update-multiple-hierarchy')} style={{ marginLeft: "-40px" }}>
+                                    Update Multiple Hierarchy
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                            <NavTabs.Item>
+                                <NavTabs.Link eventKey="view-project-hierarchies" onClick={() => handleSubTabSelect('view-project-hierarchies')}>
+                                    View Project Hierarchies
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                        </NavTabs>
+                    </Tab.Container>
+                )
+            }
 
-            {activeMainTab === 'add-rent' && (
-                <Tab.Container activeKey={activeSubTab}>
-                    <NavTabs variant="tabs" className="justify-content-center my-3">
-                        <NavTabs.Item>
-                            <NavTabs.Link className='fw-bold' eventKey="get" onClick={() => handleSubTabSelect('get')}>
-                                Existing Rent Agreement
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                        <NavTabs.Item>
-                            <NavTabs.Link className='fw-bold' eventKey="Add New Agreement" onClick={() => handleSubTabSelect('view-project-hierarchies')}>
-                                Add New Agreement
-                            </NavTabs.Link>
-                        </NavTabs.Item>
-                    </NavTabs>
-                </Tab.Container>
-            )}
+            {
+                activeMainTab === 'add-rent' && (
+                    <Tab.Container activeKey={activeSubTab}>
+                        <NavTabs variant="tabs" className="justify-content-center my-3">
+                            <NavTabs.Item>
+                                <NavTabs.Link className='fw-bold' eventKey="get"
+
+                                    style={{
+                                        backgroundColor: window.location.hash === "#/add-rent" ? "#1b7ae7" : "white",
+                                        borderRadius: "5px",
+                                        color: window.location.hash === "#/add-rent" ? "white" : "#1b7ae7",
+                                        bordorColor: window.location.hash === "#/add-rent" ? "#0d6efd" : "#0d6efd",
+                                    }}
+
+
+                                    onClick={() => handleSubTabSelect('get')} >
+                                    Existing Rent Agreement
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                            <NavTabs.Item>
+                                <NavTabs.Link className='fw-bold' eventKey="Add New Agreement"
+                                    style={{
+                                        backgroundColor: window.location.hash === "#/view-project-hierarchies" ? "#1b7ae7" : "white",
+                                        borderRadius: "5px",
+                                        color: window.location.hash === "#/view-project-hierarchies" ? "white" : "#1b7ae7",
+                                        bordorColor: window.location.hash === "#/view-project-hierarchies" ? "#0d6efd" : "#0d6efd",
+                                    }}
+
+
+                                    onClick={() => handleSubTabSelect('view-project-hierarchies')} >
+                                    Add New Agreement
+                                </NavTabs.Link>
+                            </NavTabs.Item>
+                        </NavTabs>
+                    </Tab.Container>
+                )
+            }
+
+            {
+                activeMainTab === 'hierarchy' && (
+                    <Tab.Container activeKey={activeSubTab}>
+                        <NavTabs variant="tabs" className="justify-content-center my-3">
+                            {ro === '2' ?
+                                (
+                                    <>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link
+                                                className='fw-bold'
+                                                // className={`fw-bold ${window.location.hash === '#/UpdateSingleHierarchy' ? 'active-tab' : ''}`}
+                                                style={{
+                                                    backgroundColor: window.location.hash === "#/UpdateSingleHierarchy" ? "#1b7ae7" : "white",
+                                                    borderRadius: "5px",
+                                                    color: window.location.hash === "#/UpdateSingleHierarchy" ? "white" : "#1b7ae7",
+                                                    bordorColor: window.location.hash === "#/UpdateSingleHierarchy" ? "#0d6efd" : "#0d6efd",
+                                                }}
+                                                eventKey="UpdateSingleHierarchy" onClick={() => handleSubTabSelect('UpdateSingleHierarchy')}>
+                                                Update Single Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link
+                                                className='fw-bold'
+                                                // className={`fw-bold ${window.location.hash === '#/ReplaceHierarchy' ? 'active-tab' : ''}`}
+                                                style={{
+                                                    backgroundColor: window.location.hash === "#/ReplaceHierarchy" ? "#1b7ae7" : "white",
+                                                    borderRadius: "5px",
+                                                    color: window.location.hash === "#/ReplaceHierarchy" ? "white" : "#1b7ae7",
+                                                    bordorColor: window.location.hash === "#/ReplaceHierarchy" ? "#0d6efd" : "#0d6efd",
+                                                }}
+                                                eventKey="ReplaceHierarchy" onClick={() => handleSubTabSelect('ReplaceHierarchy')}>
+                                                Replace Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                    </>
+                                    // <>
+
+
+                                    //     <NavTabs.Item>
+                                    //         <NavTabs.Link
+                                    //             className="fw-bold"
+                                    //             eventKey="UpdateSingleHierarchy"
+                                    //             onClick={() => handleSubTabSelect('UpdateSingleHierarchy')}
+                                    //             style={{
+                                    //                 backgroundColor: window.location.hash === "#/UpdateSingleHierarchy" ? "pink" : "transparent",
+                                    //                 borderRadius: "5px",
+                                    //                 color: window.location.hash === "#/UpdateSingleHierarchy" ? "white" : "black",
+                                    //             }}
+                                    //         >
+                                    //             Update Single Hierarchy
+                                    //         </NavTabs.Link>
+                                    //     </NavTabs.Item>
+                                    //     <NavTabs.Item>
+                                    //         <NavTabs.Link
+                                    //             className="fw-bold"
+                                    //             eventKey="ReplaceHierarchy"
+                                    //             onClick={() => handleSubTabSelect('ReplaceHierarchy')}
+                                    //             style={location.hash === '#/ReplaceHierarchy' ? { backgroundColor: 'pink', borderRadius: '5px' } : {}}
+                                    //         >
+                                    //             Replace Hierarchy
+                                    //         </NavTabs.Link>
+                                    //     </NavTabs.Item>
+                                    // </>
+
+                                ) : (
+                                    <>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="UpdateSingleHierarchy"
+
+                                                style={{
+                                                    backgroundColor: window.location.hash === "#/UpdateSingleHierarchy" ? "#1b7ae7" : "white",
+                                                    borderRadius: "5px",
+                                                    color: window.location.hash === "#/UpdateSingleHierarchy" ? "white" : "#1b7ae7",
+                                                    bordorColor: window.location.hash === "#/UpdateSingleHierarchy" ? "#0d6efd" : "#0d6efd",
+                                                }}
+
+
+                                                onClick={() => handleSubTabSelect('UpdateSingleHierarchy')}>
+                                                Update Single Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="ReplaceHierarchy"
+
+                                                style={{
+                                                    backgroundColor: window.location.hash === "#/ReplaceHierarchy" ? "#1b7ae7" : "white",
+                                                    borderRadius: "5px",
+                                                    color: window.location.hash === "#/ReplaceHierarchy" ? "white" : "#1b7ae7",
+                                                    bordorColor: window.location.hash === "#/ReplaceHierarchy" ? "#0d6efd" : "#0d6efd",
+                                                }}
+                                                onClick={() => handleSubTabSelect('ReplaceHierarchy')}>
+                                                Replace Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="ReferenceHierarchy"
+
+                                                style={{
+                                                    backgroundColor: window.location.hash === "#/ReferenceHierarchy" ? "#1b7ae7" : "white",
+                                                    borderRadius: "5px",
+                                                    color: window.location.hash === "#/ReferenceHierarchy" ? "white" : "#1b7ae7",
+                                                    bordorColor: window.location.hash === "#/ReferenceHierarchy" ? "#0d6efd" : "#0d6efd",
+                                                }}
+
+                                                onClick={() => handleSubTabSelect('ReferenceHierarchy')}>
+                                                Reference Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="CreateProjects" onClick={() => handleSubTabSelect('CreateProjects')}>
+                                                Create Projects
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="BulkUpdateProjectHierarchy" onClick={() => handleSubTabSelect('BulkUpdateProjectHierarchy')}>
+                                                Bulk Update Project Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                        <NavTabs.Item>
+                                            <NavTabs.Link className='fw-bold' eventKey="BulkReplaceProjectHierarchy" onClick={() => handleSubTabSelect('BulkReplaceProjectHierarchy')}>
+                                                Bulk Replace Project Hierarchy
+                                            </NavTabs.Link>
+                                        </NavTabs.Item>
+                                    </>)}
+                        </NavTabs>
+                    </Tab.Container>
+                )
+            }
 
             <Modal show={showLogoutModal} onHide={closeLogoutModal}>
                 <Modal.Header closeButton>

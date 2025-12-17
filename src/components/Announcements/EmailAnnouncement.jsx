@@ -68,40 +68,40 @@ const EmailAnnouncement = () => {
         console.log("Subject: ", subject);
         console.log("Message: ", message);
 
-        // const emailData = {
-        //     type: selection,
-        //     emails: selection === 'Email' && selectedUsers.length > 0 ? selectedUsers : ['all'],
-        //     subject: subject,
-        //     message: message,
-        // };
+        const emailData = {
+            type: selection,
+            emails: selection === 'Email' && selectedUsers.length > 0 ? selectedUsers : ['all'],
+            subject: subject,
+            message: message,
+        };
 
-        // try {
-        //     const response = await axios.post(
-        //         `${Api_base_url}/api/project/send/email`,
-        //         emailData
-        //     );
+        try {
+            const response = await axios.post(
+                `${Api_base_url}/api/project/send/email`,
+                emailData
+            );
 
-        //     if (response.status === 200) {
-        //         Swal.fire({
-        //             icon: 'success',
-        //             title: 'Success!',
-        //             text: 'Email sent successfully!',
-        //         });
-        //     } else {
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Oops...',
-        //             text: 'Failed to send email.',
-        //         });
-        //     }
-        // } catch (err) {
-        //     console.error(err);
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Error!',
-        //         text: 'Error sending email.',
-        //     });
-        // }
+            if (response.status === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Email sent successfully!',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Failed to send email.',
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Error sending email.',
+            });
+        }
     };
 
     return (

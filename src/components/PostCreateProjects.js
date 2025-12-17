@@ -177,6 +177,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './FormApi.css';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Api_base_url from './Api_base_url/Api_base_url';
 
 function PostCreateProjects() {
 
@@ -273,7 +274,7 @@ function PostCreateProjects() {
             const formData = new FormData();
             formData.append('file', file);
 
-            return axios.post('http://192.168.167.5:8560/api/project/create-project', formData, {
+            return axios.post(`${Api_base_url}/api/project/create-project`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`,

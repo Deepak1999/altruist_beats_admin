@@ -84,6 +84,7 @@ const AddSingleMultipleProjectUsers = () => {
             if (response.status === 200) {
                 if (response.data.noChange) {
                     showErrorPopup('No changes made: The hierarchy is the same as the existing one.');
+                    // fetchNonUsers();
                 } else {
                     showSuccessPopup();
                     resetForm();
@@ -125,7 +126,7 @@ const AddSingleMultipleProjectUsers = () => {
             const token = localStorage.getItem('jwttoken');
             const userId = localStorage.getItem('id');
 
-            const response = await axios.get('http://192.168.167.5:8560/api/project/getprojects', {
+            const response = await axios.get(`${Api_base_url}/api/project/getprojects`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'userId': userId,

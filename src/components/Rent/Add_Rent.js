@@ -3,29 +3,56 @@ import axios from 'axios';
 import { useTable, usePagination } from 'react-table';
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import "../Rent/Rent.css";
+import Api_base_url from "../Api_base_url/Api_base_url";
+// import axiosInstance from '../../utils/axiosInstance';
+import HomeIcon from '@mui/icons-material/Home';
+import HomeButton from "../HomeButton";
 
 const Add_Rent = () => {
     const [rentAgreements, setRentAgreements] = useState([]);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentEdit, setCurrentEdit] = useState(null);
-
+    const ho = localStorage.getItem("home");
     const fetchRentAgreements = async () => {
         try {
             const token = localStorage.getItem("jwttoken");
             const userId = localStorage.getItem("id");
-            const response = await axios.get("http://192.168.167.5:8560/api/project/get/rent", {
+            console.log("API Base URL:", Api_base_url); // Debugging step
+
+            const response = await axios.get(`${Api_base_url}/api/project/get/rent`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     userId: userId,
                 },
             });
+
             setRentAgreements(response.data.rentAgreements || []);
         } catch (err) {
             setError("Failed to fetch rent agreements.");
             console.error(err);
         }
     };
+
+    // const fetchRentAgreements = async () => {
+    //     try {
+    //         const token = localStorage.getItem("jwttoken");
+    //         const userId = localStorage.getItem("id");
+    //         const response = await axios.get("${Api_base_url}/api/project/get/rent"
+    //         ,
+    //          {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //                 userId: userId,
+    //             },
+    //         }
+    //         );
+    //         setRentAgreements(response.data.rentAgreements || []);
+    //     } catch (err) {
+    //         setError("Failed to fetch rent agreements.");
+    //         console.error(err);
+    //     }
+    // };
 
     useEffect(() => {
         fetchRentAgreements();
@@ -88,7 +115,7 @@ const Add_Rent = () => {
             const token = localStorage.getItem("jwttoken");
             const userId = localStorage.getItem("id");
             await axios.post(
-                `http://192.168.167.5:8560/api/project/rent/update/`,
+                `${Api_base_url}/api/project/rent/update/`,
                 currentEdit,
                 {
                     headers: {
@@ -128,141 +155,144 @@ const Add_Rent = () => {
 
     return (
         <div className='px-3'>
-        <div className='table-responsive px-'>
-            <table {...getTableProps()} border="1" style={{ height: "auto", textAlign: "left", }}>
-                <thead style={{ textAlign: "center", backgroundColor: "lightcyan" }}>
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody {...getTableBodyProps()} style={{ textAlign: "center" }}>
-                    {page.map(row => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map(cell => (
-                                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+            <HomeButton ho={ho} />
+            <div className='table-responsive px-'>
+                <table {...getTableProps()} border="1" style={{ height: "auto", textAlign: "left", }}>
+                    <thead style={{ textAlign: "center", backgroundColor: "lightcyan" }}>
+                        {headerGroups.map(headerGroup => (
+                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map(column => (
+                                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
                                 ))}
                             </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+                        ))}
+                    </thead>
+                    <tbody {...getTableBodyProps()} style={{ textAlign: "center" }}>
+                        {page.map(row => {
+                            prepareRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map(cell => (
+                                        // <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                        <td key={cell.column.id} {...cell.getCellProps()}>{cell.render('Cell')}</td>
 
-            <div className="pagination">
-                <button onClick={() => previousPage()} disabled={!canPreviousPage}>Previous</button>
-                <span>Page {pageIndex + 1} of {Math.ceil(rentAgreements.length / 5)}</span>
-                <button onClick={() => nextPage()} disabled={!canNextPage}>Next</button>
-            </div>
+                                    ))}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
 
-            {isModalOpen && (
-                <div className="modal_edit">
-                    <div className="modal-content-edit p-0" style={{ width: "1200px", margin: "30px auto auto", }}>
-                        <div className='modal-header p-3'>
-                            <h2>Update Rent Agreement</h2>
-                            <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
-                        </div>
+                <div className="pagination">
+                    <button onClick={() => previousPage()} disabled={!canPreviousPage}>Previous</button>
+                    <span>Page {pageIndex + 1} of {Math.ceil(rentAgreements.length / 5)}</span>
+                    <button onClick={() => nextPage()} disabled={!canNextPage}>Next</button>
+                </div>
 
-                        <form>
-                            <div className='modal-body p-3'>
-                                <div className='row'>
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Site ID</label>
-                                        <input
-                                            type="text"
-                                            name="siteId"
-                                            value={currentEdit.siteId}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Vendor Code</label>
-                                        <input
-                                            type="text"
-                                            name="vendorCode"
-                                            value={currentEdit.vendorCode}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
+                {isModalOpen && (
+                    <div className="modal_edit">
+                        <div className="modal-content-edit p-0" style={{ width: "1200px", margin: "30px auto auto", }}>
+                            <div className='modal-header p-3'>
+                                <h2>Update Rent Agreement</h2>
+                                <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
+                            </div>
 
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">State</label>
-                                        <input
-                                            type="text"
-                                            name="state"
-                                            value={currentEdit.state}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
+                            <form>
+                                <div className='modal-body p-3'>
+                                    <div className='row'>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Site ID</label>
+                                            <input
+                                                type="text"
+                                                name="siteId"
+                                                value={currentEdit.siteId}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Vendor Code</label>
+                                            <input
+                                                type="text"
+                                                name="vendorCode"
+                                                value={currentEdit.vendorCode}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
 
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Location</label>
-                                        <input
-                                            type="text"
-                                            name="location"
-                                            value={currentEdit.location}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">State</label>
+                                            <input
+                                                type="text"
+                                                name="state"
+                                                value={currentEdit.state}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
 
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Area</label>
-                                        <input
-                                            type="text"
-                                            name="area"
-                                            value={currentEdit.area}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Monthly Payment</label>
-                                        <input
-                                            type="text"
-                                            name="monthlyPayment"
-                                            value={currentEdit.monthlyPayment}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Lease Period</label>
-                                        <input
-                                            type="text"
-                                            name="leasePeriod"
-                                            value={currentEdit.leasePeriod}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-4">
-                                        <label for="vendorName" className="form-label">Address</label>
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            value={currentEdit.address}
-                                            onChange={handleChange}
-                                            id="vendorName"
-                                            placeholder="Enter Vendor Name" className="form-control" />
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Location</label>
+                                            <input
+                                                type="text"
+                                                name="location"
+                                                value={currentEdit.location}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
+
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Area</label>
+                                            <input
+                                                type="text"
+                                                name="area"
+                                                value={currentEdit.area}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Monthly Payment</label>
+                                            <input
+                                                type="text"
+                                                name="monthlyPayment"
+                                                value={currentEdit.monthlyPayment}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Lease Period</label>
+                                            <input
+                                                type="text"
+                                                name="leasePeriod"
+                                                value={currentEdit.leasePeriod}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
+                                        <div class="col-md-3 col-6 mb-4">
+                                            <label for="vendorName" className="form-label">Address</label>
+                                            <input
+                                                type="text"
+                                                name="address"
+                                                value={currentEdit.address}
+                                                onChange={handleChange}
+                                                id="vendorName"
+                                                placeholder="Enter Vendor Name" className="form-control" />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='modal-footer justify-content-center p-3'>
-                                <button type="button" onClick={handleUpdate}>Update</button>
-                            </div>
-                        </form>
+                                <div className='modal-footer justify-content-center p-3'>
+                                    <button type="button" onClick={handleUpdate}>Update</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div></div>
+                )}
+            </div></div>
     );
 };
 

@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import './Rent.css';
+// import { axiosInstance } from '../../utils/axiosInstance';
 
 const Add_Rent = () => {
 
@@ -15,12 +16,14 @@ const Add_Rent = () => {
         try {
             const token = localStorage.getItem("jwttoken");
             const userId = localStorage.getItem("id");
-            const response = await axios.get("http://192.168.167.5:8560/api/project/get/rent", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    userId: userId,
-                },
-            });
+            const response = await axios.get("${Api_base_url}/api/project/get/rent"
+                , {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
+                    },
+                }
+            );
             setRentAgreements(response.data.rentAgreements || []);
         } catch (err) {
             setError("Failed to fetch rent agreements.");
@@ -37,7 +40,9 @@ const Add_Rent = () => {
     }
 
     return (
-        <div>
+
+        < div >
+          
             <h1>Rent Agreements</h1>
             <table border="1" style={{ width: "80%", height: "80%", textAlign: "left" }}>
                 <thead>
@@ -408,11 +413,12 @@ const Add_Rent = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
 export default Add_Rent;
+
 // import React from 'react';
 // import { Formik, Form, Field, ErrorMessage } from 'formik';
 // import { Button, Card } from 'react-bootstrap';

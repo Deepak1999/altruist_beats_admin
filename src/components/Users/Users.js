@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import Swal from 'sweetalert2';
 import {
     Grid, Dialog,
     DialogActions,
@@ -11,14 +11,23 @@ import {
     TextField,
     Button,
 } from '@mui/material';
-const Users = () => {
+import Api_base_url from "../Api_base_url/Api_base_url";
+import HomeButton from "../HomeButton";
+import HomeIcon from '@mui/icons-material/Home';
 
+import { Tooltip } from 'react-tooltip';
+const Users = () => {
+    const ro = localStorage.getItem("roleId");
+
+    const [searchQuery2, setSearchQuery2] = useState("");
+    const ho = localStorage.getItem("home");
     const [unassignedProjects, setUnassignedProjects] = useState([]);
     const [assignedProjects, setAssignedProjects] = useState([]);
     const [users, setUsers] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(67); // Pagination state
+    const [currentPage, setCurrentPage] = useState(1); // Pagination state
     const itemsPerPage = 6; // Items per page
     const [activeMenu, setActiveMenu] = useState(null); // Active menu state for each user
     const navigate = useNavigate();
@@ -37,7 +46,19 @@ const Users = () => {
 
     const [showModal3, setShowModal3] = useState(false);
     const handleShow3 = () => setShowModal3(true);
-    const handleClose3 = () => setShowModal3(false);
+    // const handleClose3 = () => setShowModal3(false);
+    const handleClose3 = () => {
+        setShowModal3(false);
+        setSelectedProjectIds([]);
+        setSearchQuery('');
+        // setSelectedProjectIds([]);
+    };
+    // console.log("selecteddddddddddddddd", selectedProjectIds)
+
+    const handleClick = () => {
+        // setIsModalOpen(true); // Open the modal
+        navigate('/sign-up-users'); // Navigate to the purchase page
+    };
 
     const [showModal4, setShowModal4] = useState(false);
     const handleShow4 = () => setShowModal4(true);
@@ -50,38 +71,53 @@ const Users = () => {
     };
 
     // Fetch users from the API
+    // useEffect(() => {
+    const fetchUsers = async () => {
+        const token = localStorage.getItem("jwttoken");
+        const userId = localStorage.getItem("id");
+
+        if (!token || !userId) {
+            setError("User not authenticated");
+            return;
+        }
+
+        try {
+            const response = await axios.get(
+                `${Api_base_url}/api/users/all/user`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
+                    },
+                }
+            );
+
+            const sortedUsers = response.data.users.sort((a, b) =>
+                a.name.localeCompare(b.name) // Ensure sorting is correct
+            );
+
+            setUsers(sortedUsers);
+            setAllUsers(sortedUsers);
+            // setUsers(response.data?.users || []);
+
+
+
+
+
+
+        } catch (err) {
+            console.error("API Error:", err);
+            // setError(err.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //     fetchUsers();
+    // }, []);
     useEffect(() => {
-        const fetchUsers = async () => {
-            const token = localStorage.getItem("jwttoken");
-            const userId = localStorage.getItem("id");
-
-            if (!token || !userId) {
-                setError("User not authenticated");
-                return;
-            }
-
-            try {
-                const response = await axios.get(
-                    "http://192.168.167.5:8560/api/users/all/user",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            userId: userId,
-                        },
-                    }
-                );
-                setUsers(response.data?.users || []);
-            } catch (err) {
-                console.error("API Error:", err);
-                // setError(err.message || "Something went wrong");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchUsers();
     }, []);
-
     // Function to toggle the user menu
     const toggleMenu = (userId) => {
         setActiveMenu(activeMenu === userId ? null : userId);
@@ -106,9 +142,23 @@ const Users = () => {
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
-        fetchProjects();
+        // fetchProjects();
         // fetchNotAssignedProjects();
     }, []);
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (event.target.tagName === "A") {
+                setActiveMenu(null); // Close the active menu
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("click", handleClickOutside);
+        };
+    }, []);
+
     const fetchProjects = async (selectedUserId) => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
@@ -120,7 +170,7 @@ const Users = () => {
 
         try {
             const response = await axios.get(
-                `http://192.168.167.5:8560/api/users/project/by/user/${selectedUserId}`,
+                `${Api_base_url}/api/users/project/by/user/${selectedUserId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -158,7 +208,7 @@ const Users = () => {
 
         try {
             const response = await axios.post(
-                `http://192.168.167.5:8560/api/project-users/delete-user`,
+                `${Api_base_url}/api/project-users/delete-user`,
                 {
                     projectId: projectId,
                     projectUserId: projectUserId,
@@ -170,24 +220,113 @@ const Users = () => {
                     },
                 }
             );
-            if (response.status === 200) {
+            // if (response.status === 200 || response.data.statusCode === 200) {
+            if (response.status === 200 || response.data.statusCode === 200) {
+                Swal.fire({
+                    title: "Removed!",
+                    text: response.data.statusMessage || "Project user deleted successfully.",
+                    icon: "success",
+                    confirmButtonColor: "#2cb7fd"
+                });
+
                 setAssignedProjects(
                     Array.isArray(response.data.projects) ? response.data.projects : []
                 );
-            } else {
-                setError("Failed to fetch assigned projects");
+
+                fetchNotAssignProjects(selectedUserId);
             }
+            else {
+                Swal.fire({
+                    title: "Error!",
+                    text: response.data.statusMessage || "Failed to remove project.",
+                    icon: "error",
+                    confirmButtonColor: "#d33"
+                });
+            }
+            // else {
+            //     setError("Failed to fetch assigned projects");
+            // }
         } catch (err) {
-            console.error("API Error:", err.response?.data || err.message);
+            console.error("API Error:", err.response?.data || err.statusMessage);
             // setError(err.response?.data?.statusMessage || "Something went wrong");
         }
 
     };
-    const handleRemoveClick = (projectId, projectUserId) => {
-        console.log(projectId, projectUserId)
-        setSelectedProjectId(projectId);
-        fetchRemoveProjects(projectId, projectUserId);
+    const handleSearch2 = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery2(query);
+        console.log("Search Query:", query);
+        if (!query) {
+            setUsers(allUsers);
+        } else {
+            const filteredUsers = allUsers.filter((user) => {
+                const name = user.name ? user.name.toLowerCase() : "";
+                const email = user.email ? user.email.toLowerCase() : "";
+                return name.includes(query) || email.includes(query);
+            });
+
+            // Sort the filtered users
+            const sortedFilteredUsers = filteredUsers.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+
+            console.log("Filtered Users:", sortedFilteredUsers);
+            setUsers(sortedFilteredUsers);
+        }
     };
+
+    // const handleSearch2 = (e) => {
+    //     const query = e.target.value.toLowerCase();
+    //     setSearchQuery2(query);
+
+    //     if (!query) {
+    //         setUsers(allUsers);
+    //     } else {
+    //         const filteredProjects = allUsers.filter((user) => {
+    //             const projectName = user.name ? user.name.toLowerCase() : "";
+    //             const email = user.shortName ? user.shortName.toLowerCase() : "";
+
+    //             return projectName.includes(query) || email.includes(query);
+    //         });
+
+    //         // Sort after filtering
+    //         const sortedFilteredProjects = filteredProjects.sort((a, b) =>
+    //             a.projectName.localeCompare(b.projectName)
+    //         );
+
+    //         console.log("Filtered Users22333333333333:", filteredProjects);
+    //         setUsers(sortedFilteredProjects);
+    //     }
+    // };
+
+    const handleRemoveClick = (projectId, projectUserId) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to remove this project?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#2cb7fd',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetchRemoveProjects(projectId, projectUserId);
+                handleClose4(); // Close the modal after confirmation
+                Swal.fire(
+                    'Removed!',
+                    'The project has been removed.',
+                    'success'
+                );
+            }
+        });
+    };
+
+    // const handleRemoveClick = (projectId, projectUserId) => {
+    //     console.log(projectId, projectUserId)
+    //     setSelectedProjectId(projectId);
+    //     fetchRemoveProjects(projectId, projectUserId);
+    // };
 
     const fetchNotAssignProjects = async (selectedUserId) => {
 
@@ -201,7 +340,7 @@ const Users = () => {
 
         try {
             const response = await axios.get(
-                `http://192.168.167.5:8560/api/users/project/not/by/user/${selectedUserId}`,
+                `${Api_base_url}/api/users/project/not/by/user/${selectedUserId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -211,8 +350,14 @@ const Users = () => {
             );
 
             console.log("Not Assigned Projects Response:", response.data);
+
             if (response.status === 200) {
                 setUnassignedProjects(
+                    Array.isArray(response.data.projects) ? response.data.projects : []
+                );
+
+
+                setAllUnassignedProjects(
                     Array.isArray(response.data.projects) ? response.data.projects : []
                 );
             } else {
@@ -220,7 +365,6 @@ const Users = () => {
             }
         } catch (err) {
             console.error("API Error:", err.response?.data || err.message);
-            // setError(err.response?.data?.statusMessage || "Something went wrong");
         }
 
     };
@@ -241,7 +385,7 @@ const Users = () => {
 
         try {
             const response = await axios.get(
-                `http://192.168.167.5:8560/api/users/disable-user/${selectedUserId}`,
+                `${Api_base_url}/api/users/disable-user/${selectedUserId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -304,6 +448,7 @@ const Users = () => {
         }
         if (!userData.name || !userData.email || !userData.shortName || !userData.istype) {
             setError("All fields must be filled before updating.");
+
             return;
         }
         const dataToSend = {
@@ -322,7 +467,7 @@ const Users = () => {
 
         try {
             const response = await axios.post(
-                'http://192.168.167.5:8560/api/users/update',
+                `${Api_base_url}/api/users/update`,
                 dataToSend,
                 {
                     headers: {
@@ -334,7 +479,9 @@ const Users = () => {
 
             if (response.status === 200) {
                 console.log("User updated successfully", response.data);
-                handleClose1();  // Close the modal after successful update
+                fetchUsers();
+                handleClose1();
+                // Close the modal after successful update
             } else {
                 console.error("Failed to update user", response.data);
             }
@@ -411,14 +558,137 @@ const Users = () => {
     };
 
     // Capture project ID from checkbox
+    // const handleCheckboxChange = (e, projectId) => {
+    //     if (e.target.checked) {
+    //         setSelectedProjectId(projectId);
+    //     } else {
+    //         setSelectedProjectId(null);
+    //     }
+    // };
+    const [selectedProjectIds, setSelectedProjectIds] = useState([]);
+
     const handleCheckboxChange = (e, projectId) => {
         if (e.target.checked) {
-            setSelectedProjectId(projectId);
+            setSelectedProjectIds((prev) => [...prev, projectId]);
         } else {
-            setSelectedProjectId(null);
+            setSelectedProjectIds((prev) => prev.filter((id) => id !== projectId));
+        }
+    };
+    const [allUnassignedProjects, setAllUnassignedProjects] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+
+        console.log("Search Query:", query);
+        console.log("Projects before filtering:", allUnassignedProjects);
+
+        if (!query) {
+            setUnassignedProjects(allUnassignedProjects); // Reset when query is empty
+        } else {
+            const filteredProjects = allUnassignedProjects.filter((project) => {
+                const projectName = project.name ? project.name.toLowerCase() : "";
+                const company = project.businessCompany ? project.businessCompany.toLowerCase() : "";
+                const createdBy = project.createdBy ? project.createdBy.toLowerCase() : "";
+
+                return (
+                    projectName.includes(query) ||
+                    company.includes(query) ||
+                    createdBy.includes(query)
+                );
+            });
+
+            console.log("Filtered Projects:", filteredProjects);
+            setUnassignedProjects(filteredProjects);
         }
     };
 
+
+    //  const handleCheckboxChange = (userId, userName, userEmail) => {
+    //         setSelectedUsers((prevSelectedUsers) => {
+    //             const isAlreadySelected = prevSelectedUsers.some(user => user.id === userId);
+    //             if (isAlreadySelected) {
+    //                 return prevSelectedUsers.filter(user => user.id !== userId);
+    //             }
+    //             return [...prevSelectedUsers, { id: userId, name: userName, email: userEmail }];
+    //         });
+    //         console.log("users1111111111111:", selectedUsers);
+    //     };
+
+    // const handleAddProject = async () => {
+    //     const token = localStorage.getItem("jwttoken");
+    //     const userId = localStorage.getItem("id");
+
+    //     if (!token) {
+    //         setError("User not authenticated");
+    //         return;
+    //     }
+
+    //     if (!selectedEmail || !selectedProjectId) {
+    //         setError("Please select both email and project ID.");
+    //         return;
+    //     }
+
+    //     // Show confirmation pop-up
+    //     const result = await Swal.fire({
+    //         title: "Are you sure?",
+    //         text: "You are about to assign the selected user(s) to this project.",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#3085d6",
+    //         cancelButtonColor: "#d33",
+    //         confirmButtonText: "Yes, assign it!"
+    //     });
+
+    //     if (result.isConfirmed) {
+    //         const dataToSend = [{
+    //             users: selectedEmail,
+    //             projectId: selectedProjectId,
+    //         }];
+
+    //         console.log("Sending request with data:", dataToSend);
+
+    //         try {
+    //             const response = await axios.post(
+    //                 `${Api_base_url}/api/project-users/add-singleproject-users`,
+    //                 dataToSend,
+    //                 {
+    //                     headers: {
+    //                         Authorization: `Bearer ${token}`,
+    //                         userId: userId,
+    //                     },
+    //                 }
+    //             );
+
+    //             if (response.data.statusCode === 200) {
+    //                 console.log("Project assigned successfully", response.data);
+    //                 await fetchProjects(selectedUserId);
+
+    //                 // Show success message
+    //                 Swal.fire(
+    //                     "Assigned!",
+    //                     "User(s) have been assigned to the project.",
+    //                     "success"
+    //                 );
+    //                 setSelectedProjectId(null);
+    //             } else {
+    //                 console.error("Failed to assign project", response.data);
+    //                 Swal.fire(
+    //                     "Failed!",
+    //                     "Failed to assign project. Please try again.",
+    //                     "error"
+    //                 );
+    //             }
+    //         } catch (err) {
+    //             console.error("Error assigning project:", err.response?.data || err.message);
+    //             Swal.fire(
+    //                 "Error!",
+    //                 err.response?.data?.message || "Something went wrong.",
+    //                 "error"
+    //             );
+    //         }
+    //     }
+    // };
     const handleAddProject = async () => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
@@ -428,21 +698,38 @@ const Users = () => {
             return;
         }
 
-        if (!selectedEmail || !selectedProjectId) {
+        if (!selectedEmail || !selectedProjectIds) {
             setError("Please select both email and project ID.");
             return;
         }
 
-        const dataToSend = [{
-            users: selectedEmail,
-            projectId: selectedProjectId,
-        }];
+        console.log("Selected Email:", selectedEmail);
+        console.log("Selected Project ID:", selectedProjectIds);
 
-        console.log("Sending request with data:", dataToSend);
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to assign the project.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes"
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
+            const dataToSend = [{
+                users: selectedEmail,
+                // projectId: selectedProjectIds,
+                projectId: selectedProjectIds.join(", ")
+
+            }];
+
+            console.log("Sending request with data:", dataToSend);
+
             const response = await axios.post(
-                "http://192.168.167.5:8560/api/project-users/add-singleproject-users",
+                `${Api_base_url}/api/project-users/add-singleproject-users`,
                 dataToSend,
                 {
                     headers: {
@@ -452,19 +739,94 @@ const Users = () => {
                 }
             );
 
-            if (response.status === 200) {
+            if (response.data.statusCode === 200) {
                 console.log("Project assigned successfully", response.data);
-                await fetchProjects(selectedUserId);
+                if (selectedUserId) {
+                    await fetchProjects(selectedUserId);
+                }
+                console.log("nhuygfehj", response.data.statusMessage)
+                Swal.fire(response.data.statusMessage);
+                setSelectedProjectIds([]);
+                // Reset state
+                setSelectedProjectId(null);
             } else {
-                console.error("Failed to assign project", response.data);
+                console.error(response.data.statusMessage || "Failed to assign project");
+                Swal.fire("Failed!", "Failed to assign project. Please try again.", "error");
             }
         } catch (err) {
             console.error("Error assigning project:", err.response?.data || err.message);
+            Swal.fire("Error!", err.response?.data?.message || "Something went wrong.", "error");
         }
     };
 
+    // const handleAddProject = async () => {
+    //     const token = localStorage.getItem("jwttoken");
+    //     const userId = localStorage.getItem("id");
+
+    //     if (!token) {
+    //         setError("User not authenticated");
+    //         return;
+    //     }
+
+    //     if (!selectedEmail || !selectedProjectId) {
+    //         setError("Please select both email and project ID.");
+    //         return;
+    //     }
+
+    //     const dataToSend = [{
+    //         users: selectedEmail,
+    //         projectId: selectedProjectId,
+    //     }];
+
+    //     console.log("Sending request with data:", dataToSend);
+
+    //     try {
+    //         const response = await axios.post(
+    //             `${Api_base_url}/api/project-users/add-singleproject-users`,
+    //             dataToSend,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                     userId: userId,
+    //                 },
+    //             }
+    //         );
+
+    //         if (response.status === 200) {
+    //             console.log("Project assigned successfully", response.data);
+    //             await fetchProjects(selectedUserId);
+    //         } else {
+    //             console.error("Failed to assign project", response.data);
+    //         }
+    //     } catch (err) {
+    //         console.error("Error assigning project:", err.response?.data || err.message);
+    //     }
+    // };
+
     return (
         <div style={{ padding: "20px", backgroundColor: "#f8f9fa", minHeight: 'calc(100vh - 84px)' }}>
+
+            <HomeButton ho={ho} />
+
+            <form className="d-flex mx-auto">
+                <div className="row w-100">
+                    <div className="d-flex justify-content-end align-items-center">
+                        <input
+                            style={{ width: "15rem" }}
+                            type="text"
+                            className="form-control my-2 "
+                            placeholder="Search by user name or email..."
+                            value={searchQuery2}
+                            onChange={handleSearch2}
+                            name="search"
+                        />
+                        <button type="submit" className="btn btn-outline-secondary  m-0 p-2" style={{ height: "maxContent" }}>
+                            <i className="fa fa-search" />
+                        </button>
+                    </div>
+                </div>
+            </form>
+
             <div
                 style={{
                     backgroundColor: "#e5e5e5",
@@ -473,6 +835,7 @@ const Users = () => {
                     padding: "20px",
                 }}
             >
+
                 <div
                     style={{
                         display: "flex",
@@ -482,20 +845,32 @@ const Users = () => {
                         paddingBottom: "1rem",
                     }}
                 >
-                    {currentUsers.map((user, project, userIndex) => (
+                    {currentUsers.map((user, uv, project, userIndex) => (
 
                         <div
 
-                            key={user.id}
+                            // key={user.id}
+                            key={uv}
 
                             style={{
-                                width: "18%",
-                                borderRadius: "25px",
-                                padding: "15px",
+
+
+                                flex: "0 0 auto", // Prevent wrapping
+                                border: "1px solid var(--bs-light)",
+                                borderRadius: "11px",
                                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                                backgroundColor: "#fff",
-                                textAlign: "center",
+                                padding: "1rem",
+                                backgroundColor: "var(--bs-white)",
+                                width: "200px", // Fixed width for each card
+                                position: "relative", textAlign: "center",
                                 transition: "transform 0.3s, box-shadow 0.3s",
+                                // width: "18%",
+                                // borderRadius: "25px",
+                                // padding: "15px",
+                                // boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                                // backgroundColor: "#fff",
+                                // textAlign: "center",
+                                // transition: "transform 0.3s, box-shadow 0.3s",
                             }}
                             onMouseEnter={(e) =>
                                 (e.currentTarget.style.transform = "translateY(-5px)")
@@ -512,15 +887,38 @@ const Users = () => {
                             >
                                 {user.name?.charAt(0) || "U"}
                             </span>
-                            <h4 style={{ marginBottom: "10px" }}>{user.name}</h4>
+                            <h4 style={{
+                                lineHeight: "24px", fontSize: "13px",
+                                fontWeight: 500,
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                boxSizing: "border-box",
+                                display: "block",
+                                color: "black",
+                                fontSize: "20px",
+                                marginBottom: "0.5rem",
+                                textAlign: "center",
+                                cursor: "pointer"
+                                // marginBottom: "10px"
+                            }}>{user.name}</h4>
                             <p style={{
-
+                                lineHeight: "24px",
                                 fontSize: "13px",
                                 fontWeight: 700,
                                 color: "#6a6a6a",
-                                lineHeight: "24px"
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                boxSizing: "border-box",
+                                display: "block", // Adds hover effect
+                                cursor: "pointer"
+                                // fontSize: "13px",
+                                // fontWeight: 700,
+                                // color: "#6a6a6a",
+                                // lineHeight: "24px"
 
-                            }}>{user.shortName}</p>
+                            }} title={user.name}>{user.shortName}</p>
                             <hr style={{ margin: "10px 0" }} />
                             <p style={{
                                 lineHeight: "24px",
@@ -531,12 +929,25 @@ const Users = () => {
                             >
                                 Email_Id
                             </p>
-                            <p style={{
+                            {/* <p style={{
                                 lineHeight: "24px",
                                 fontSize: "13px",
                                 fontWeight: 700,
                                 color: "#6a6a6a"
-                            }}>{user.email}</p>
+                            }}> */}
+                             <p style={{
+                                lineHeight: "24px",
+                                fontSize: "13px",
+                                fontWeight: 700,
+                                color: "#6a6a6a",
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                boxSizing: "border-box",
+                                display: "block",
+                                cursor: "pointer"
+                            }} title={user.email}>
+                            {user.email}</p>
                             <hr style={{ margin: "10px 0" }} />
                             <p style={{
                                 lineHeight: "24px",
@@ -601,7 +1012,269 @@ const Users = () => {
                                             zIndex: 10,
                                         }}
                                     >
+
                                         <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
+                                            {/* {ro === "2" && (
+                                                <>
+                                                    <li>
+                                                        <a
+                                                            href="javascript:void(0);"
+                                                            className="icon-add-usr dropdown-item"
+                                                            onClick={(e) => {
+                                                                handleShow1(e);
+                                                                handleEditClick(user.id);
+                                                            }}
+                                                            style={{
+                                                                padding: "0.5rem 1rem",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                width: "100%",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-plus-circle" />
+                                                            &nbsp;Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a
+                                                            className="dropdown-item"
+                                                            onClick={handleShow2}
+                                                            style={{
+                                                                padding: "0.5rem 1rem",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                width: "100%",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-pencil-alt" />
+                                                            &nbsp;Change password
+                                                        </a>
+                                                    </li>
+                                                </>
+                                            )}
+                                            <li>
+                                                <a
+                                                    className="dropdown-item"
+                                                    onClick={(e) => {
+                                                        handleShow3(e);
+                                                        handleAssignClick(user.id);
+                                                        handleAddProjectClick(user.email);
+                                                    }}
+                                                    style={{
+                                                        padding: "0.5rem 1rem",
+                                                        border: "none",
+                                                        background: "none",
+                                                        cursor: "pointer",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                    }}
+                                                >
+                                                    <i className="fas fa-pencil-alt" />
+                                                    &nbsp;Assign Project
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    className="dropdown-item"
+                                                    onClick={(e) => {
+                                                        handleShow4(e);
+                                                        handleAssignClick(user.id);
+                                                    }}
+                                                    style={{
+                                                        padding: "0.5rem 1rem",
+                                                        border: "none",
+                                                        background: "none",
+                                                        cursor: "pointer",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                    }}
+                                                >
+                                                    <i className="fas fa-pencil-alt" />
+                                                    &nbsp;Remove Project
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a
+                                                    onClick={(e) => {
+                                                        handleDeactivateClick(user.id);
+                                                    }}
+                                                    className="dropdown-item"
+                                                    style={{
+                                                        padding: "0.5rem 1rem",
+                                                        border: "none",
+                                                        background: "none",
+                                                        cursor: "pointer",
+                                                        width: "100%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                    }}
+                                                >
+                                                    <i className="fas fa-pencil-alt" />
+                                                    &nbsp;Disable
+                                                </a>
+                                            </li> */}
+                                            {ro === "2" ? (
+                                                <>
+                                                    <li>
+                                                        <a
+                                                            className="dropdown-item"
+                                                            onClick={(e) => {
+                                                                handleShow3(e);
+                                                                handleAssignClick(user.id);
+                                                                handleAddProjectClick(user.email);
+                                                            }}
+                                                            style={{
+                                                                padding: "0.5rem 1rem",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                width: "100%",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-pencil-alt" />
+                                                            &nbsp;Assign Project
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a
+                                                            className="dropdown-item"
+                                                            onClick={(e) => {
+                                                                handleShow4(e);
+                                                                handleAssignClick(user.id);
+                                                            }}
+                                                            style={{
+                                                                padding: "0.5rem 1rem",
+                                                                border: "none",
+                                                                background: "none",
+                                                                cursor: "pointer",
+                                                                width: "100%",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                            }}
+                                                        >
+                                                            <i className="fas fa-pencil-alt" />
+                                                            &nbsp;Remove Project
+                                                        </a>
+                                                    </li>
+                                                </>
+                                            ) : (<>
+                                                <li>
+                                                    <a
+                                                        href="javascript:void(0);"
+                                                        className="icon-add-usr dropdown-item"
+                                                        onClick={(e) => {
+                                                            handleShow1(e);
+                                                            handleEditClick(user.id);
+                                                        }}
+                                                        style={{
+                                                            padding: "0.5rem 1rem",
+                                                            border: "none",
+                                                            background: "none",
+                                                            cursor: "pointer",
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-plus-circle" />
+                                                        &nbsp;Edit
+                                                    </a>
+                                                </li>
+                                                {/* <li>
+                                                    <a
+                                                        className="dropdown-item"
+                                                        onClick={handleShow2}
+                                                        style={{
+                                                            padding: "0.5rem 1rem",
+                                                            border: "none",
+                                                            background: "none",
+                                                            cursor: "pointer",
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-pencil-alt" />
+                                                        &nbsp;Change password
+                                                    </a>
+                                                </li> */}
+                                                <li>
+                                                    <a
+                                                        className="dropdown-item"
+                                                        onClick={(e) => {
+                                                            handleShow3(e);
+                                                            handleAssignClick(user.id);
+                                                            handleAddProjectClick(user.email);
+                                                        }}
+                                                        style={{
+                                                            padding: "0.5rem 1rem",
+                                                            border: "none",
+                                                            background: "none",
+                                                            cursor: "pointer",
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-pencil-alt" />
+                                                        &nbsp;Assign Project
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a
+                                                        className="dropdown-item"
+                                                        onClick={(e) => {
+                                                            handleShow4(e);
+                                                            handleAssignClick(user.id);
+                                                        }}
+                                                        style={{
+                                                            padding: "0.5rem 1rem",
+                                                            border: "none",
+                                                            background: "none",
+                                                            cursor: "pointer",
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-pencil-alt" />
+                                                        &nbsp;Remove Project
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a
+                                                        onClick={(e) => {
+                                                            handleDeactivateClick(user.id);
+                                                        }}
+                                                        className="dropdown-item"
+                                                        style={{
+                                                            padding: "0.5rem 1rem",
+                                                            border: "none",
+                                                            background: "none",
+                                                            cursor: "pointer",
+                                                            width: "100%",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-pencil-alt" />
+                                                        &nbsp;Disable
+                                                    </a>
+                                                </li>
+                                            </>)}
+                                        </ul>
+
+                                        {/* <ul style={{ listStyleType: "none", margin: 0, padding: 0 }}>
                                             <li>
                                                 <a
                                                     href="javascript:void(0);"
@@ -712,7 +1385,7 @@ const Users = () => {
                                                     &nbsp;Disable
                                                 </a>
                                             </li>
-                                        </ul>
+                                        </ul> */}
                                     </div>
 
                                 )}
@@ -763,6 +1436,54 @@ const Users = () => {
                 >
                     Next
                 </button>
+                {/* <button
+                    className="d-block rounded-pill"
+                    onClick={handleClick}
+                    style={{
+                        backgroundColor: "#2cb7fd",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        color: "white",
+                        padding: "10px",
+                        border: "none",
+                        cursor: "pointer",
+                        width: "56px",
+                        height: "56px",
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s',
+                    }}
+                    data-tooltip-id="addItemTooltip"
+                >
+                    <i className="fa-solid fa-plus"></i>
+                </button> */}
+                <div className="crt_task_btn_btm" style={{
+                    position: 'fixed',
+                    right: '4%',
+                    bottom: '28%',
+                    zIndex: '9'
+                }}>
+                    <div>
+                        <button
+                            className="d-block rounded-pill"
+                            onClick={handleClick}
+                            style={{
+                                backgroundColor: "#2cb7fd",
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                color: "white",
+                                padding: "10px",
+                                border: "none",
+                                cursor: "pointer",
+                                width: "56px",
+                                height: "56px",
+                                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0s',
+                            }}
+                            data-tooltip-id="addItemTooltip"
+                        >
+                            <i className="fa-solid fa-plus"></i>
+                        </button>
+
+                        <Tooltip id="addItemTooltip" place="top" />
+                    </div></div>
             </div>
 
             {/* Loading and error handling */}
@@ -936,29 +1657,63 @@ const Users = () => {
 
             <div className={`modal fade ${showModal3 ? "show" : ""}`} style={{ display: showModal3 ? "block" : "none" }}>
                 <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
+                    <div className="modal-content" style={{
+                        width: "65rem",
+                        marginLeft: "-113px"
+                    }}>
                         <div className="modal-header" style={{ background: "#2cb7fd", color: "white" }}>
                             <h5 className="modal-title" id="addUserModalLabel">
                                 Assign Project
                             </h5>
-                            <button type="button" className="btn-close m-0" onClick={handleClose3}></button>
+                            <button type="button" className="btn-close btn-close-white m-0" style={{ color: "white !important" }} onClick={handleClose3}></button>
                         </div>
                         <div className="modal-body add_view_user">
                             <div className="row">
                                 <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
-                                    {/* <div className="col-md-7 search-container"> */}
-                                    <form action="/action_page.php" className="search-bar-form d-flex mx-auto" style={{ width: "251px" }}>
-                                        <input className="form-control" type="text" placeholder="Search.." name="search" />
-                                        <button className="m-0" type="submit">
-                                            <i className="fa fa-search"></i>
-                                        </button>
+
+                                    {/* <form className="d-flex mx-auto">
+                                        <div className="row w-100">
+                                            <div className="d-flex justify-content-end align-items-center">
+                                                <input
+                                                    style={{ width: "15rem" }}
+                                                    type="text"
+                                                    className="form-control my-2 "
+                                                    placeholder="Search by project name"
+                                                    value={searchQuery}
+                                                    onChange={handleSearch}
+                                                    name="search"
+                                                />
+                                                <button type="submit" className="btn btn-outline-secondary  m-0 p-2" style={{ height: "maxContent" }}>
+                                                    <i className="fa fa-search" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form> */}
+                                    <form className="d-flex mx-auto">
+                                        <div className="row w-100">
+                                            <div className="d-flex justify-content-start align-items-center" style={{ marginLeft: "-31rem" }}>
+                                                <input
+                                                    style={{ width: "15rem" }}
+                                                    type="text"
+                                                    className="form-control my-2"
+                                                    placeholder="Search by project name"
+                                                    value={searchQuery}
+                                                    onChange={handleSearch}
+                                                    name="search"
+                                                />
+                                                <button type="submit" className="btn btn-outline-secondary m-0 p-2" style={{ height: "max-content" }}>
+                                                    <i className="fa fa-search" />
+                                                </button>
+                                            </div>
+                                        </div>
                                     </form>
+
                                     {/* </div> */}
                                 </div>
                                 <div className="col-md-6 my-2">
                                     <div
-                                        className="card p-0 w-100 h-100 m-0"
-                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "25rem" }}
+                                        className="card p-0 h-100 m-0"
+                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "39rem" }}
                                     >
                                         <div className="table-responsive" style={{
                                             maxHeight: "300px",
@@ -969,8 +1724,11 @@ const Users = () => {
                                                 <thead>
                                                     <tr>
                                                         <th></th>
-                                                        <th>#</th>
-                                                        <th>Name</th>
+                                                        {/* <th>#</th> */}
+                                                        <th style={{ width: "120px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                            Name
+                                                        </th>
+                                                        {/* <th>Name</th> */}
                                                         <th>Company</th>
                                                         <th>Type</th>
                                                         <th>Created By</th>
@@ -982,14 +1740,33 @@ const Users = () => {
                                                         unassignedProjects.map((project, index) => (
                                                             <tr key={project.id}>
                                                                 <td>
-                                                                    <input
+                                                                    {/* <input
                                                                         type="checkbox"
                                                                         onChange={(e) => handleCheckboxChange(e, project.id)}
+                                                                    /> */}
 
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={selectedProjectIds.includes(project.id)}
+                                                                        onChange={(e) => handleCheckboxChange(e, project.id)}
                                                                     />
+
+                                                                    {/* /> */}
                                                                 </td>
-                                                                <td>{index + 1}</td>
-                                                                <td>{project.name}</td>
+                                                                {/* <td>{index + 1}</td> */}
+                                                                <td
+                                                                    style={{
+                                                                        maxWidth: "120px",
+                                                                        whiteSpace: "nowrap",
+                                                                        overflow: "hidden",
+                                                                        textOverflow: "ellipsis",
+                                                                        cursor: "pointer",
+                                                                    }}
+                                                                    title={project.name} // Show full name on hover
+                                                                >
+                                                                    {project.name}
+                                                                </td>
+                                                                {/* <td>{project.name}</td> */}
                                                                 <td>{project.businessCompany || "N/A"}</td>
                                                                 <td>{project.ptype || "N/A"}</td>
                                                                 <td>{project.createdBy || "N/A"}</td>
@@ -1009,8 +1786,12 @@ const Users = () => {
                                 </div>
                                 <div className="col-md-6 my-2">
                                     <div
-                                        className="card p-0 w-100 h-100"
-                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "20rem" }}
+                                        className="card p-0  h-100"
+                                        style={{
+                                            boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "20rem",
+
+                                            marginLeft: "164px"
+                                        }}
                                     >
                                         <div className="table-responsive" style={{
                                             maxHeight: "300px", // Set the height you want
@@ -1053,8 +1834,7 @@ const Users = () => {
                             style={{ border: "none", marginLeft: "-99px" }}
                         >
                             <button
-                                type="button"
-                                onClick={handleAddProject}
+                                type="button" onClick={(e) => { handleAddProject(e); handleClose3(); }}
                                 className="btn"
                                 style={{
                                     background: "#2cb7fd",
@@ -1065,7 +1845,7 @@ const Users = () => {
                                 Assign
                             </button>
                             &nbsp;&nbsp;
-                            <button
+                            {/* <button
                                 type="button"
                                 className="btn"
                                 onClick={handleClose3}
@@ -1076,7 +1856,7 @@ const Users = () => {
                                 }}
                             >
                                 Assign & Continue
-                            </button>
+                            </button> */}
                             &nbsp;&nbsp;
                             <button
                                 type="button"
@@ -1105,25 +1885,28 @@ const Users = () => {
                             <h5 className="modal-title" id="addUserModalLabel">
                                 Remove Project
                             </h5>
-                            <button type="button" className="btn-close" onClick={handleClose4}></button>
+                            <button type="button" className="btn-close btn-close-white" onClick={handleClose4}></button>
                         </div>
                         <div className="modal-body add_view_user">
                             <div className="row">
                                 <div className="col-md-12 my-2" style={{ display: "flex", justifyContent: "end" }}>
                                     {/* <div className="col-md-7 search-container"> */}
-                                    <form action="/action_page.php"
+                                    {/* <form action="/action_page.php"
                                         className="search-bar-form d-flex mx-auto" style={{ width: "251px" }}>
                                         <input className="form-control" type="text" placeholder="Search.." name="search" />
                                         <button className="m-0" type="submit">
                                             <i className="fa fa-search"></i>
                                         </button>
-                                    </form>
+                                    </form> */}
                                     {/* </div> */}
                                 </div>
                                 <div className="col-md-6 mx-auto my-2">
                                     <div
-                                        className="card w-100 h-100 m-0"
-                                        style={{ boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "27rem", marginLeft: "-139px" }}
+                                        className="card "
+                                        style={{
+                                            boxShadow: "0 2px 4px rgba(0, 0.1, 0.2, 0.3)", width: "39rem",
+                                            marginLeft: "-151px"
+                                        }}
                                     >
                                         <div className="table-responsive" style={{
                                             maxHeight: "300px", // Set the height you want
@@ -1151,7 +1934,7 @@ const Users = () => {
                                                                             color: "white",
                                                                             fontWeight: "bold",
                                                                         }}
-                                                                        onClick={() => handleRemoveClick(project.projectId, selectedUserId)}
+                                                                        onClick={() => { handleRemoveClick(project.projectId, selectedUserId); handleClose4(); }}
                                                                     >
                                                                         Remove
                                                                     </button>

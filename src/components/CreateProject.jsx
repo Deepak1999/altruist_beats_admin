@@ -5,18 +5,15 @@ import Api_base_url from "./Api_base_url/Api_base_url";
 
 const CreateProjectModal = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [name, setName] = useState("");
     const [shortName, setShortName] = useState("");
     const [company, setCompany] = useState("");
     const [type, setType] = useState("");
     const [initiator, setInitiator] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
-
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
     const fetchUsers = async () => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
@@ -44,12 +41,10 @@ const CreateProjectModal = () => {
             setLoading(false);
         }
     };
-
     const handleUserChange = (selectedOptions) => {
         const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
         setSelectedUsers(selectedEmails);
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -209,6 +204,7 @@ const CreateProjectModal = () => {
                                     getOptionLabel={(e) => e.label}
                                     getOptionValue={(e) => e.value}
                                 />
+                                
                             </div>
                             <div>
                                 <button type="submit">Create</button>

@@ -13,7 +13,10 @@
     width: 100%;
     /* Ensure the navbar takes up the full width */
 }
-
+.nav-item{
+    margin-left: 42px;
+     /* margin-right:14rem; */
+}
 .navbar-nav {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -55,6 +58,7 @@
     background-color: #1b7ae7;
     color: white;
     border-color: #0d6efd;
+    
 }
 
 .navbar-expand-lg .navbar-nav {
@@ -72,6 +76,7 @@
 .ml-auto {
     margin-left: auto;
 }
+
 /* 
 .beats-img {
     width: 26px;
@@ -82,3 +87,15 @@
     border-radius: 1px solid white;
     margin-left: 10px !important;
 } */
+/* .navbar-expand-lg .navbar-nav > .nav-link:not(:first-child,:last-child){
+    margin: 0 8px !important;
+}
+.navbar-expand-lg .navbar-nav > .nav-link{
+    m
+} */
+
+.active-tab {
+     background-color: #1b7ae7;
+    color: white;
+    border-color: #0d6efd;
+}

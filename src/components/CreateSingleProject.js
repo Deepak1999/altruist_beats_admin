@@ -9,7 +9,7 @@ import Loader from './Loader';
 import Swal from 'sweetalert2';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import Api_base_url from './Api_base_url/Api_base_url'; 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
     shortName: Yup.string().required('Short Name is required'),
@@ -83,7 +83,7 @@ const navigate = useNavigate();
         try {
 
             const response = await axios.post(
-                'http://192.168.167.5:8560/api/project/create-single-project',
+                `${Api_base_url}/api/project/create-single-project`,
                 {
                     values,
 

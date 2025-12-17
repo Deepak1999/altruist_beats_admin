@@ -1,29 +1,23 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Loader from './Loader';
+// import Loader from './Loader';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './FormApi.css';
-import { useNavigate } from 'react-router-dom';
-import Api_base_url from './Api_base_url/Api_base_url';
+import './a.css';
+import { useLocation } from 'react-router-dom';
+import HomeIcon from '@mui/icons-material/Home';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Api_base_url from '../Api_base_url/Api_base_url';
+import HomeButton from "../HomeButton"
 function UpdateProjectHierarchy() {
-
-    const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem('jwttoken');
-    const userId = localStorage.getItem('id');
-    if (!token || !userId) {
-
-      navigate('/'); // Redirect to login if no token is found
-    }
-  }, [navigate]);
-    
+    const location = useLocation();
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [message, setMessage] = useState('');
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef(null);
-
+const ho = localStorage.getItem('home');
     // Retrieve token and userId from localStorage
     const token = localStorage.getItem('jwttoken');
     const userId = localStorage.getItem('id'); // Optional, if you need the userId for something
@@ -42,38 +36,54 @@ function UpdateProjectHierarchy() {
             timer: 1500,
         });
     };
-
-    const handleAPIResponse = (status, data) => {
-        switch (status) {
-            case 200:
-                showPopup('success', 'Success', 'Files uploaded successfully!');
-                setMessage('Files uploaded successfully');
-                break;
-            case 400:
-                showPopup('error', 'Bad Request', 'Invalid file format. Please upload xlsx, xls, or csv files.');
-                setMessage('Bad request. Please check the file format.');
-                break;
-            case 401:
-                showPopup('error', 'Unauthorized', 'You are not authorized to upload files. Please log in.');
-                setMessage('Unauthorized. Please log in.');
-                break;
-            case 403:
-                showPopup('error', 'Forbidden', 'You do not have permission to upload files.');
-                setMessage('Forbidden. You do not have permission.');
-                break;
-            case 500:
-                showPopup('error', 'Server Error', 'An error occurred on the server. Please try again later.');
-                setMessage('Server error. Please try again later.');
-                break;
-            default:
-                showPopup('error', 'Error', `Unexpected error: ${status}. Please try again.`);
-                setMessage(`Unexpected error: ${status}. Please try again.`);
+    const handleAPIResponse = (statusCode, data) => {
+        if (data.statusCode === 200) {
+            toast.success(
+                <div>
+                    <span style={{ color: 'green', fontWeight: 'bold' }}>{data.statusMessage || 'Files uploaded successfully!'}</span>
+                </div>
+            );
+            setMessage(data.statusMessage || 'Files uploaded successfully!');
+        } else {
+            toast.error(
+                <div>
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>{data.statusMessage || `Error: ${statusCode}`}</span>
+                </div>
+            );
+            setMessage(data.statusMessage || `Error: ${statusCode}`);
         }
     };
+    // const handleAPIResponse = (status, data) => {
+    //     switch (status) {
+    //         case 200:
+    //             showPopup('success', 'Success', 'Files uploaded successfully!');
+    //             setMessage('Files uploaded successfully');
+    //             break;
+    //         case 400:
+    //             showPopup('error', 'Bad Request', 'Invalid file format. Please upload xlsx, xls, or csv files.');
+    //             setMessage('Bad request. Please check the file format.');
+    //             break;
+    //         case 401:
+    //             showPopup('error', 'Unauthorized', 'You are not authorized to upload files. Please log in.');
+    //             setMessage('Unauthorized. Please log in.');
+    //             break;
+    //         case 403:
+    //             showPopup('error', 'Forbidden', 'You do not have permission to upload files.');
+    //             setMessage('Forbidden. You do not have permission.');
+    //             break;
+    //         case 500:
+    //             showPopup('error', 'Server Error', 'An error occurred on the server. Please try again later.');
+    //             setMessage('Server error. Please try again later.');
+    //             break;
+    //         default:
+    //             showPopup('error', 'Error', `Unexpected error: ${status}. Please try again.`);
+    //             setMessage(`Unexpected error: ${status}. Please try again.`);
+    //     }
+    // };
 
     const handleFileUploadError = (error) => {
         if (error.response) {
-            handleAPIResponse(error.response.status, error.response.data);
+            handleAPIResponse(error.response.statusCode, error.response.data);
         } else if (error.request) {
             showPopup('error', 'Network Error', 'No response from the server. Please check your network connection.');
             setMessage('Network error. Please check your connection.');
@@ -110,7 +120,7 @@ function UpdateProjectHierarchy() {
                 }
             })
                 .then((response) => {
-                    handleAPIResponse(response.status, response.data);
+                    handleAPIResponse(response.statusCode, response.data);
                 })
                 .catch((error) => {
                     handleFileUploadError(error);
@@ -134,16 +144,24 @@ function UpdateProjectHierarchy() {
     };
 
     return (
+        <> 
+                {ho === "1" ? (
+                                       <HomeIcon
+                                           style={{ cursor: 'pointer' }}
+                                           onClick={() => window.location.href = 'https://beats.altruistindia.com/#/'}
+                                       />
+                                   ) : null}
         <div className="container mt-4">
-            {uploading && <Loader loading={uploading} />}
+          <ToastContainer />
+            {/* {uploading && <Loader loading={uploading} />} */}
             <div className={`content-wrapper ${uploading ? 'loading-active' : ''}`}>
-                <div className="label-form" style={{ marginTop: '177px' }}>
+                <div className="label-form" style={{ marginTop: '188px' }}>
 
-                    <h6>Update Project Hierarchy</h6>
+                    <h6>Bulk Update Project Hierarchy</h6>
                 </div>
                 <div className="card-form p-3">
                     <div className="card-body-form">
-                        <div className="card-1-form">
+                        <div className="card-1-form" style={{ paddingTop: "0px" }}>
                             <label htmlFor="fileInput" className="form-label-form">
                                 Supported format: xlsx, xls, csv
                             </label>
@@ -157,7 +175,7 @@ function UpdateProjectHierarchy() {
                                 multiple
                             />
                         </div>
-                        <div className="d-flex">
+                       <div className="d-flex justify-content-center">
                             <button className="btn btn-primary me-2" onClick={onFileUpload} disabled={uploading}>
                                 {uploading ? 'Uploading...' : 'Submit'}
                             </button>
@@ -175,6 +193,7 @@ function UpdateProjectHierarchy() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
 
