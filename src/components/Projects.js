@@ -258,10 +258,10 @@ const Projects = ({ token, userId }) => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
 
-        if (!token || !userId) {
-            navigate("/");
-            return;
-        }
+        // if (!token || !userId) {
+        //     navigate("/");
+        //     return;
+        // }
 
         const usersToAdd = selectedUsers.map(user => ({
             projectId: selectedProjectId,
@@ -293,8 +293,7 @@ const Projects = ({ token, userId }) => {
         try {
             console.log("usersToAdd:::::::::::::", usersToAdd);
 
-            const response = await axios.post(
-                `${Api_base_url}/api/project/update-singleproject-hierarchy`,
+            const response = await axios.post(`${Api_base_url}/api/project/update-project-hierarchy-shift`,
                 usersToAdd,
                 {
                     headers: {
@@ -384,8 +383,8 @@ const Projects = ({ token, userId }) => {
 
             console.log("Payload sent to API:", usersToAdd);
 
-            const response = await axios.post(
-                `${Api_base_url}/api/project/update-singleproject-hierarchyShift`,
+            // const response = await axios.post(`${Api_base_url}/api/project/update-singleproject-hierarchyShift`,
+            const response = await axios.post(`${Api_base_url}/api/project/update-project-hierarchy-shift`,
                 usersToAdd,
                 {
                     headers: {
@@ -883,6 +882,7 @@ const Projects = ({ token, userId }) => {
 
     const handleUserChange = (selectedOptions) => {
         const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
+        console.log("selectedEmails");
         setSelectedUsers(selectedEmails);
         setSelectedUsersApprove(selectedEmails);
     };
@@ -1129,7 +1129,7 @@ const Projects = ({ token, userId }) => {
                                             textAlign: "center",
                                             color: "#6a6a6a"
                                         }}>
-                                        {project.shortName}</p>
+                                            {project.shortName}</p>
                                         <hr
                                             style={{
                                                 fontSize: '14px',
@@ -2031,7 +2031,7 @@ const Projects = ({ token, userId }) => {
                                                         <th>#</th>
                                                         {/* <th>User Name</th> */}
                                                         <th style={{ width: "311px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                                        Email</th>
+                                                            Email</th>
                                                         {/* <th>Role</th> */}
                                                         <th>Hierarchy</th>
                                                     </tr>
@@ -2064,7 +2064,7 @@ const Projects = ({ token, userId }) => {
                                                                 </td>
                                                                 {/* <td>{user.userName || user.name}</td> */}
                                                                 <td
-                                                                 style={{
+                                                                    style={{
                                                                         maxWidth: "311px",
                                                                         whiteSpace: "nowrap",
                                                                         overflow: "hidden",
@@ -2072,7 +2072,7 @@ const Projects = ({ token, userId }) => {
                                                                         cursor: "pointer",
                                                                     }}
                                                                     title={user.email}
-                                                                
+
                                                                 >{user.email}</td>
 
                                                                 <td>
@@ -2116,7 +2116,8 @@ const Projects = ({ token, userId }) => {
                                                     style={{ color: "white" }}
                                                     onClick={handleUpdateHierarchy}
                                                 >
-                                                    Add & Continue
+                                                    {/* Add & Continue */}
+                                                    Add & Shift Hierarchy
                                                 </button>
                                             </div>
                                         </div>

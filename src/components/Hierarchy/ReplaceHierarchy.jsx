@@ -125,7 +125,8 @@ const Replace = () => {
 
     try {
       const response = await axios.post(
-        `${Api_base_url}/api/project/update-singleproject-hierarchyShift`,
+        // `${Api_base_url}/api/project/update-singleproject-hierarchyShift`,
+        `${Api_base_url}/api/project/update-project-hierarchy-shift`,
         [requestData],
         {
           headers: {
@@ -181,7 +182,7 @@ const Replace = () => {
 
   return (
     <>
-       <HomeButton ho={ho} />
+      <HomeButton ho={ho} />
 
       <div className="container px-4 pb-4 mt-4">
         <ToastContainer />
