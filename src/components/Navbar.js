@@ -216,8 +216,8 @@ const NavBar = () => {
                                     style={{
 
                                         color: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "white" : "white",
-                                        borderRadius:(window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "7px" : "none",
-                                        border:(window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "1px solid white" : "none",
+                                        borderRadius: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "7px" : "none",
+                                        border: (window.location.hash === "#/projects" || window.location.hash === "#/purchase") ? "1px solid white" : "none",
 
 
                                     }}
@@ -516,34 +516,6 @@ const NavBar = () => {
                                             </NavTabs.Link>
                                         </NavTabs.Item>
                                     </>
-                                    // <>
-
-
-                                    //     <NavTabs.Item>
-                                    //         <NavTabs.Link
-                                    //             className="fw-bold"
-                                    //             eventKey="UpdateSingleHierarchy"
-                                    //             onClick={() => handleSubTabSelect('UpdateSingleHierarchy')}
-                                    //             style={{
-                                    //                 backgroundColor: window.location.hash === "#/UpdateSingleHierarchy" ? "pink" : "transparent",
-                                    //                 borderRadius: "5px",
-                                    //                 color: window.location.hash === "#/UpdateSingleHierarchy" ? "white" : "black",
-                                    //             }}
-                                    //         >
-                                    //             Update Single Hierarchy
-                                    //         </NavTabs.Link>
-                                    //     </NavTabs.Item>
-                                    //     <NavTabs.Item>
-                                    //         <NavTabs.Link
-                                    //             className="fw-bold"
-                                    //             eventKey="ReplaceHierarchy"
-                                    //             onClick={() => handleSubTabSelect('ReplaceHierarchy')}
-                                    //             style={location.hash === '#/ReplaceHierarchy' ? { backgroundColor: 'pink', borderRadius: '5px' } : {}}
-                                    //         >
-                                    //             Replace Hierarchy
-                                    //         </NavTabs.Link>
-                                    //     </NavTabs.Item>
-                                    // </>
 
                                 ) : (
                                     <>

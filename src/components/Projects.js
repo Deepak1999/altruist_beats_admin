@@ -107,12 +107,7 @@ const Projects = ({ token, userId }) => {
             setProjects(sortedProjects);
             setAllProjects(sortedProjects);
 
-            // setProjects(response.data?.Projects || []);
-
-            // setAllProjects(response.data?.Projects || []);
-
         } catch (err) {
-            // setError(err.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -129,7 +124,7 @@ const Projects = ({ token, userId }) => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (event.target.tagName === "A") {
-                setActiveMenu(null); // Close the active menu
+                setActiveMenu(null);
             }
         };
 
@@ -141,8 +136,7 @@ const Projects = ({ token, userId }) => {
     }, []);
 
     const handleClick = () => {
-        // setIsModalOpen(true); // Open the modal
-        navigate('/purchase'); // Navigate to the purchase page
+        navigate('/purchase');
     };
 
     const formatDate = (date) => {
@@ -150,10 +144,6 @@ const Projects = ({ token, userId }) => {
         return new Date(date).toLocaleDateString(undefined, options);
     };
 
-
-
-
-    // import Swal from "sweetalert2";
     const handleAddUser = async (currentPopUpProjectId) => {
         const token = localStorage.getItem("jwttoken");
         const userId = localStorage.getItem("id");
@@ -170,7 +160,7 @@ const Projects = ({ token, userId }) => {
 
         if (usersToAdd.length === 0) {
             Swal.fire("Error!", "No users selected to add!", "error");
-            return; // Stop execution
+            return;
         }
 
         const confirmResult = await Swal.fire({
@@ -184,7 +174,7 @@ const Projects = ({ token, userId }) => {
         });
 
         if (!confirmResult.isConfirmed) {
-            return; // Exit if user cancels
+            return;
         }
 
         try {
@@ -232,11 +222,9 @@ const Projects = ({ token, userId }) => {
         }
     };
 
-
     useEffect(() => {
         console.log("Updated selectedUsers:", selectedUsers);
     }, [selectedUsers]);
-
 
     const
         handleHierarchyChange = (email, value) => {
@@ -269,13 +257,11 @@ const Projects = ({ token, userId }) => {
             email: user.email,
         }));
 
-        // ✅ Check if the request payload is empty
         if (usersToAdd.length === 0) {
             Swal.fire("Error!", "No users selected to update hierarchy!", "error");
-            return; // Stop execution
+            return;
         }
 
-        // ✅ Confirmation pop-up before proceeding
         const confirmResult = await Swal.fire({
             title: "Are you sure?",
             text: "Do you want to update the hierarchy for selected users?",
@@ -287,7 +273,7 @@ const Projects = ({ token, userId }) => {
         });
 
         if (!confirmResult.isConfirmed) {
-            return; // Exit if user cancels
+            return;
         }
 
         try {
@@ -352,7 +338,6 @@ const Projects = ({ token, userId }) => {
 
         console.log("Selected Users before API call:", selectedUsersApprove);
 
-        // Show confirmation popup
         const result = await Swal.fire({
             title: "Are you sure?",
             text: "Do you want to shift the hierarchy of these users?",
@@ -364,7 +349,7 @@ const Projects = ({ token, userId }) => {
         });
 
         if (!result.isConfirmed) {
-            return; // Stop execution if user cancels
+            return;
         }
 
         try {
@@ -500,12 +485,11 @@ const Projects = ({ token, userId }) => {
         const fetchUsers = async () => {
             if (!searchTerm.trim()) {
                 setSearchResults([]);
-                // Clear results if search term is empty
                 return;
             }
 
             if (!searchTerm.trim()) {
-                fetchNonUsers(); // Fetch non-users if search is empty
+                fetchNonUsers();
                 return;
             }
 
@@ -613,13 +597,11 @@ const Projects = ({ token, userId }) => {
         }
     };
 
-    // const handleCloseModal = () => setShowModal(false);
     const handleCloseModal = () => {
-        setSelectedUsers([]); // Clear selected users
-        setShowModal(false); // Close the modal
+        setSelectedUsers([]);
+        setShowModal(false);
         setSearchQuery("");
     };
-
 
     useEffect(() => {
         const token = localStorage.getItem("jwttoken");

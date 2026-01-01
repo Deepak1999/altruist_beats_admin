@@ -20,6 +20,10 @@ const validationSchema = Yup.object({
 const initialValues = {
     name: '',
     email: '',
+    bankName: '',
+    ifscCode: '',
+    accountNo: '',
+    holderName: ''
 };
 
 const SignUpUsers = () => {
@@ -30,7 +34,7 @@ const SignUpUsers = () => {
         const userId = localStorage.getItem('id');
         if (!token || !userId) {
 
-            navigate('/'); // Redirect to login if no token is found
+            navigate('/');
         }
     }, [navigate]);
 
@@ -57,97 +61,10 @@ const SignUpUsers = () => {
         });
     };
 
-
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     const token = localStorage.getItem('jwttoken');
-    //     const userId = localStorage.getItem('id');
-
-    //     // Show confirmation popup
-    //     const confirmation = await Swal.fire({
-    //         title: 'Confirm Submission',
-    //         text: 'Are you sure you want to submit this form?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, submit it!',
-    //         cancelButtonText: 'No, cancel',
-    //     });
-
-    //     if (!confirmation.isConfirmed) {
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post(
-    //             `${Api_base_url}/api/users/sign-up`,
-    //             values,
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${token}`,
-    //                     'userId': userId
-    //                 },
-    //             }
-    //         );
-
-    //         if (response.data.statusCode === 200) {
-    //             Swal.fire({
-    //                 title: "Success!",
-    //                 text: response.data.statusMessage || "Users successfully added to the Hierarchy!",
-    //                 icon: "success",
-    //                 confirmButtonColor: "#3085d6",
-    //             });
-
-
-
-
-    //         } else {
-    //             Swal.fire({
-    //                 title: "Error!",
-    //                 text: response.data.statusMessage || "Failed to shift hierarchy.",
-    //                 icon: "error",
-    //                 confirmButtonColor: "#d33",
-
-    //             }
-    //             );
-
-
-    //         }
-    //     } catch (error) {
-    //         if (error.response) {
-    //             const status = response.data.statusCode;
-    //             const statusMessage = response.data.statusMessage || 'Unexpected error occurred.';
-
-    //             switch (status) {
-    //                 case 409:
-    //                     Swal.fire('Error', statusMessage, 'error');
-    //                     break;
-    //                 case 400:
-    //                     Swal.fire('Error', 'Bad Request: Please check the input data.', 'error');
-    //                     break;
-    //                 case 401:
-    //                     Swal.fire('Error', 'Unauthorized: Please log in to proceed.', 'error');
-    //                     break;
-    //                 case 404:
-    //                     Swal.fire('Error', 'Not Found: The requested resource could not be found.', 'error');
-    //                     break;
-    //                 case 500:
-    //                     Swal.fire('Error', 'Server Error: Please try again later.', 'error');
-    //                     break;
-    //                 default:
-    //                     Swal.fire('Error', statusMessage, 'error');
-    //             }
-    //         } else {
-    //             Swal.fire('Error', 'No response from server. Please check your connection.', 'error');
-    //         }
-    //     } finally {
-    //         setSubmitting(false);
-    //     }
-    // };
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const token = localStorage.getItem('jwttoken');
         const userId = localStorage.getItem('id');
 
-        // Show confirmation popup
         const confirmation = await Swal.fire({
             title: 'Confirm Submission',
             text: 'Are you sure you want to create user?',
@@ -163,7 +80,7 @@ const SignUpUsers = () => {
 
         try {
             const response = await axios.post(
-                `${Api_base_url}/api/users/sign-up`,
+                `${Api_base_url}/api/users/sign-up/v2`,
                 values,
                 {
                     headers: {
@@ -174,13 +91,14 @@ const SignUpUsers = () => {
                 }
             );
 
-            if (response.data.statusCode === 200 || response.data.statusCode === 201 ) {
+            if (response.data.statusCode === 200 || response.data.statusCode === 201) {
                 Swal.fire({
                     title: "Success!",
                     text: response.data.statusMessage || "Users successfully added to the Hierarchy!",
                     icon: "success",
                     confirmButtonColor: "#3085d6",
                 });
+                resetForm();
             } else {
                 Swal.fire({
                     title: "Error!",
@@ -224,143 +142,6 @@ const SignUpUsers = () => {
         }
     };
 
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     const token = localStorage.getItem('jwttoken');
-    //     const userId = localStorage.getItem('id');
-
-    //     // Show confirmation popup
-    //     const confirmation = await Swal.fire({
-    //         title: 'Confirm Submission',
-    //         text: 'Are you sure you want to submit this form?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, submit it!',
-    //         cancelButtonText: 'No, cancel',
-    //     });
-
-    //     // If user cancels, do nothing
-    //     if (!confirmation.isConfirmed) {
-    //         return;
-    //     }
-
-    //     try {
-    //         const response = await axios.post(
-    //             `${Api_base_url}/api/users/sign-up`,
-    //             values,
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${token}`,
-    //                     'userId': userId
-    //                 },
-    //             }
-    //         );
-
-    //         if (response.data.statusCode === 200) {
-    //             Swal.fire('Success', 'User registered successfully!', 'success');
-    //             resetForm();
-    //         }
-    //     } catch (error) {
-    //         if (error.response) {
-    //             const statusCode = error.response.data.statusCode;
-    //             const statusMessage = error.response.data?.statusMessage || 'Unexpected error occurred.';
-
-    //             switch (statusCode) {
-    //                 case 409:
-    //                     Swal.fire('Error', 'Email Already Exists. Try Login !!!', 'error');
-    //                     break;
-    //                 case 400:
-    //                     Swal.fire('Error', 'Bad Request: Please check the input data.', 'error');
-    //                     break;
-    //                 case 401:
-    //                     Swal.fire('Error', 'Unauthorized: Please log in to proceed.', 'error');
-    //                     break;
-    //                 case 404:
-    //                     Swal.fire('Error', 'Not Found: The requested resource could not be found.', 'error');
-    //                     break;
-    //                 case 500:
-    //                     Swal.fire('Error', 'Server Error: Please try again later.', 'error');
-    //                     break;
-    //                 default:
-    //                     Swal.fire('Error', statusMessage, 'error');
-    //             }
-    //         } else {
-    //             Swal.fire('Error', 'No response from server. Please check your connection.', 'error');
-    //         }
-    //     } finally {
-    //         setSubmitting(false);
-    //     }
-    // };
-
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     setIsLoading(true);
-    //     setSubmissionStatus(null);
-    //     const token = localStorage.getItem('jwttoken');
-    //     const userId = localStorage.getItem('id');
-    //     try {
-    //         const response = await axios.post(
-    //             `${Api_base_url}/api/users/sign-up`,
-    //             values,  // Pass the form values directly
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'application/json',
-    //                     'Authorization': `Bearer ${token}`,
-    //                     'userId': userId
-    //                 },
-    //             }
-    //         );
-
-    //         if (response.status === 200) {
-    //             showSuccessPopup();
-    //             resetForm();
-    //         } else {
-    //             switch (response.status) {
-    //                 case 400:
-    //                     showErrorPopup('Bad Request: Please check the input data.');
-    //                     break;
-    //                 case 401:
-    //                     showErrorPopup('Unauthorized: Please log in to proceed.');
-    //                     break;
-    //                 case 404:
-    //                     showErrorPopup('Not Found: The requested resource could not be found.');
-    //                     break;
-    //                 case 500:
-    //                     showErrorPopup('Server Error: Please try again later.');
-    //                     break;
-    //                 default:
-    //                     showErrorPopup('Unexpected error occurred. Please try again.');
-    //             }
-    //         }
-    //     } catch (error) {
-    //         if (error.response) {
-    //             const status = error.response.status;
-    //             switch (status) {
-    //                 case 400:
-    //                     showErrorPopup('Bad Request: Please check the input data.');
-    //                     break;
-    //                 case 401:
-    //                     showErrorPopup('Unauthorized: Please log in to proceed.');
-    //                     break;
-    //                 case 404:
-    //                     showErrorPopup('Not Found: The requested resource could not be found.');
-    //                     break;
-    //                 case 500:
-    //                     showErrorPopup('Server Error: Please try again later.');
-    //                     break;
-    //                 default:
-    //                     showErrorPopup(`Error: ${error.response.data.message || 'Failed to save data'}`);
-    //             }
-    //         } else if (error.request) {
-    //             showErrorPopup('Error: No response from server. Please check your connection or try again later.');
-    //         } else {
-    //             showErrorPopup(`Error: ${error.message}`);
-    //         }
-    //     } finally {
-    //         setSubmitting(false);
-    //         setIsLoading(false);
-    //     }
-    // };
-
     return (
         <div className="container mt-4">
             {isLoading && <Loader loading={isLoading} />}
@@ -384,31 +165,66 @@ const SignUpUsers = () => {
                         {({ isSubmitting }) => (
                             <Form>
                                 <div className="row">
-                                    <div className="form-group mb-3 card-1"
-                                        style={{ height: "10rem" }}>
-                                        <div className="col-md-4 ">
-                                            <label htmlFor="name" className="mb-1">Name *</label>
-                                            <Field
-                                                type="text"
-                                                id="name"
-                                                name="name"
-                                                className="form-control"
-                                                placeholder="Enter your name"
-                                            />
-                                            <ErrorMessage name="name" component="div" style={{ color: "red", fontSize: "12px" }} />
-                                        </div>
-                                        <div className="col-md-4 " style={{ marginLeft: "72px" }}>
-                                            <label htmlFor="email">Email *</label>
-                                            <Field
+                                    <div className="col-md-3 mb-3">
+                                        <label>Name</label>
+                                        <Field
+                                            type="text"
+                                            name="name"
+                                            className="form-control"
+                                            placeholder="Enter your name"
+                                        />
+                                        {/* <ErrorMessage name="name" component="div" className="text-danger small" /> */}
+                                    </div>
 
-                                                type="email"
-                                                id="email"
-                                                name="email"
-                                                className="form-control"
-                                                placeholder="Enter your email"
-                                            />
-                                            <ErrorMessage name="email" component="div" style={{ color: "red", fontSize: "12px" }} />
-                                        </div>
+                                    <div className="col-md-3 mb-3">
+                                        <label>Email</label>
+                                        <Field
+                                            type="email"
+                                            name="email"
+                                            className="form-control"
+                                            placeholder="Enter your email"
+                                        />
+                                        {/* <ErrorMessage name="email" component="div" className="text-danger small" /> */}
+                                    </div>
+
+                                    <div className="col-md-3 mb-3">
+                                        <label>Bank Name</label>
+                                        <Field
+                                            type="text"
+                                            name="bankName"
+                                            className="form-control"
+                                            placeholder="Enter bank name"
+                                        />
+                                    </div>
+
+                                    <div className="col-md-3 mb-3">
+                                        <label>IFSC Code</label>
+                                        <Field
+                                            type="text"
+                                            name="ifscCode"
+                                            className="form-control"
+                                            placeholder="Enter IFSC code"
+                                        />
+                                    </div>
+
+                                    <div className="col-md-3 mb-3">
+                                        <label>Account No</label>
+                                        <Field
+                                            type="text"
+                                            name="accountNo"
+                                            className="form-control"
+                                            placeholder="Enter account number"
+                                        />
+                                    </div>
+
+                                    <div className="col-md-3 mb-3">
+                                        <label>Holder Name</label>
+                                        <Field
+                                            type="text"
+                                            name="holderName"
+                                            className="form-control"
+                                            placeholder="Enter holder name"
+                                        />
                                     </div>
                                 </div>
 
