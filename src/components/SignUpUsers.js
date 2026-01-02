@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { Button, Alert, Card } from 'react-bootstrap';
+import { Button, Alert, Card, ToastContainer } from 'react-bootstrap';
 import * as Yup from 'yup';
 import axios from 'axios';
 import './BodyApi.css';
@@ -8,6 +8,7 @@ import Loader from './Loader';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import Api_base_url from './Api_base_url/Api_base_url';
+import { toast } from 'react-toastify';
 
 const validationSchema = Yup.object({
     name: Yup.string().required('Name is required'),
@@ -23,12 +24,16 @@ const initialValues = {
     bankName: '',
     ifscCode: '',
     accountNo: '',
-    holderName: ''
+    holderName: '',
+    roleId: ''
 };
 
 const SignUpUsers = () => {
 
+    const [roles, setRoles] = useState([]);
+
     const navigate = useNavigate();
+
     useEffect(() => {
         const token = localStorage.getItem('jwttoken');
         const userId = localStorage.getItem('id');
@@ -60,6 +65,48 @@ const SignUpUsers = () => {
             timer: 2000,
         });
     };
+
+    const handleGetRoles = async () => {
+
+        const token = localStorage.getItem('jwttoken');
+        const userId = localStorage.getItem('id');
+
+        if (!userId || !token) {
+            toast.error("Missing necessary data in localStorage");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${Api_base_url}/api/users/get-all-roles`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token}`,
+                        'userId': userId
+                    },
+                }
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+                if (Array.isArray(data)) {
+                    setRoles(data);
+                } else {
+                    toast.error("Invalid role data format");
+                }
+            } else {
+                toast.error("Failed to fetch roles with status: " + response.status);
+            }
+        } catch (error) {
+            toast.error("Error during fetch: " + error.message);
+        }
+    };
+
+    useEffect(() => {
+        handleGetRoles();
+    }, []);
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const token = localStorage.getItem('jwttoken');
@@ -226,6 +273,19 @@ const SignUpUsers = () => {
                                             placeholder="Enter holder name"
                                         />
                                     </div>
+                                    <div className="col-md-3 mb-3">
+                                        <label>Select RoleID</label>
+
+                                        <Field as="select" name="roleId" className="form-control">
+                                            <option value="">Select Role_ID</option>
+
+                                            {roles.map((item) => (
+                                                <option key={item.id} value={item.id}>
+                                                    {item.role}
+                                                </option>
+                                            ))}
+                                        </Field>
+                                    </div>
                                 </div>
 
                                 <div style={{
@@ -263,6 +323,7 @@ const SignUpUsers = () => {
                     {submissionStatus.message}
                 </Alert>
             )}
+            <ToastContainer />
         </div>
     );
 };
