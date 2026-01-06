@@ -1,10 +1,10 @@
 import React from 'react'
 import PostCreateProjects from './PostCreateProjects'
 
-function FileManagement () {
+function FileManagement() {
   return (<>
     <div>{PostCreateProjects}</div>
-    </>
+  </>
   )
 }
 

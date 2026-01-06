@@ -30,6 +30,9 @@ import CreateProjects from "./components/Hierarchy/CreateProjects";
 import ReferenceHierarchy from "./components/Hierarchy/ReferenceHierarchy";
 import BulkUpdateProjectHierarchy from "./components/Hierarchy/BulkUpdateProjectHierarchy";
 import BulkReplaceProjectHierarchy from "./components/Hierarchy/BulkReplaceProjectHierarchy";
+import AddSiteId from "./components/Hierarchy/AddSiteId";
+import AddUsers from './components/Hierarchy/AddUsers';
+import DownloadHierarchy from './components/Hierarchy/DownloadHierarchy';
 // import SignUpUsers from './components/SignUpUsers';
 
 // Map module names to components
@@ -59,7 +62,10 @@ const componentMap = {
   'ReferenceHierarchy': ReferenceHierarchy,
   'BulkUpdateProjectHierarchy': BulkUpdateProjectHierarchy,
   'BulkReplaceProjectHierarchy': BulkReplaceProjectHierarchy,
- 
+  'AddSiteId': AddSiteId,
+  'AddUsers': AddUsers,
+  'DownloadHierarchy': DownloadHierarchy,
+
 };
 
 const AppRoutes = () => {

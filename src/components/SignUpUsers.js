@@ -25,7 +25,8 @@ const initialValues = {
     ifscCode: '',
     accountNo: '',
     holderName: '',
-    roleId: ''
+    roleId: '',
+    employeeCode: ''
 };
 
 const SignUpUsers = () => {
@@ -285,6 +286,15 @@ const SignUpUsers = () => {
                                                 </option>
                                             ))}
                                         </Field>
+                                    </div>
+                                    <div className="col-md-3 mb-3">
+                                        <label>Employee Code</label>
+                                        <Field
+                                            type="text"
+                                            name="employeeCode"
+                                            className="form-control"
+                                            placeholder="Enter Employee Code"
+                                        />
                                     </div>
                                 </div>
 
