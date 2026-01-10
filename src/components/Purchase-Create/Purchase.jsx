@@ -100,131 +100,6 @@ const Purchase = () => {
         else if (name === "user") setSelectedUserNew(value);
     };
 
-    // const handleUserChange = (selectedOptions) => {
-    //     const selectedEmails = selectedOptions ? selectedOptions.map(option => option.email) : [];
-    //     setSelectedUsers(selectedEmails);
-    // };
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     setLoading(true);
-
-    //     const token = localStorage.getItem('jwttoken');
-    //     const userId = localStorage.getItem('id');
-
-    //     const requestPayload = {
-    //         name: values.name,
-    //         shortName: values.shortName,
-    //         company: values.company,
-    //         type: 1,
-    //         initiator: values.initiator.length > 0 ? values.initiator.map(user => user.value).join(', ') : '',
-    //         users: values.users.map(user => user.value),
-    //         modifierEmails: values.modifierEmails.map(user => user.value),
-    //         advanceHierarchyEmails: values.advanceHierarchyEmails.map(user => user.value),
-    //         paymentHierarchyEmails: values.paymentHierarchyEmails.map(user => user.value),
-    //     };
-
-    //     try {
-    //         const response = await axios.post(`${Api_base_url}/api/project/create-purchase-project`, requestPayload, {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //                 userId: userId,
-    //             },
-    //         });
-    //         console.log('Form submitted successfully:', response.data);
-    //         const message = response.data.statusMessage;
-
-    //         if (response.data.statusCode === 200) {
-    //             Swal.fire("Success!", "Users successfully added to the project!", "success");
-    //         } else {
-    //             Swal.fire({
-    //                 title: 'Fail!',
-    //                 text: `${message}`,  // Fixed template string syntax
-    //                 icon: 'error',       // Corrected icon value
-    //                 confirmButtonText: 'Try Again'  // Improved user-friendly message
-    //             });
-    //         }
-    // console.log('Form submitted successfully:', response.data);
-    // const message = response.data.statusMessage
-    // if (response.data.statusCode === 200) {
-    //     Swal.fire("Success!", "Users successfully added to the project!", "success");
-    // } else {
-    //     Swal.fire({
-    //         title: 'Fail!',
-    //         text: ${message},
-    //         icon: 'failiur',
-    //         confirmButtonText: 'not Ok'
-    //     });
-    // }
-
-    //         resetForm();
-    //     } catch (error) {
-    //         console.error('Error:', error);
-
-    //         Swal.fire({
-    //             title: 'Error!',
-    //             text: `Failed to create project: ${error.response?.data?.message || 'Unknown error'}`,
-    //             icon: 'error',
-    //             confirmButtonText: 'Try Again'
-    //         });
-    //     }
-
-    //     setLoading(false);
-    //     setSubmitting(false);
-    // };
-
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     setLoading(true);
-
-    //     const token = localStorage.getItem('jwttoken');
-    //     const userId = localStorage.getItem('id');
-
-    //     const requestPayload = {
-    //         name: values.name,
-    //         shortName: values.shortName,
-    //         company: values.company,
-    //         type: 1,
-    //         // initiator: values.initiator.map(user => user.value),
-    //         initiator: values.initiator.length > 0 ? values.initiator.map(user => user.value).join(', ') : '',
-
-    //         users: values.users.map(user => user.value),
-    //         modifierEmails: values.modifierEmails.map(user => user.value),
-    //         advanceHierarchyEmails: values.advanceHierarchyEmails.map(user => user.value),
-    //         paymentHierarchyEmails: values.paymentHierarchyEmails.map(user => user.value),
-    //     };
-
-    //     try {
-    //         const response = await axios.post(`${Api_base_url}/api/project/create-purchase-project`, requestPayload, {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //                 userId: userId,
-    //             },
-    //         });
-
-    //         console.log('Form submitted successfully:', response.data);
-
-    //         Swal.fire({
-    //             title: 'Success!',
-    //             text: 'Project created successfully.',
-    //             icon: 'success',
-    //             confirmButtonText: 'OK'
-    //         });
-
-    //         resetForm();
-    //     } catch (error) {
-    //         console.error('Error:', error);
-
-    //         Swal.fire({
-    //             title: 'Error!',
-    //             text: `Failed to create project: ${error.response?.data?.message || 'Unknown error'}`,
-    //             icon: 'error',
-    //             confirmButtonText: 'Try Again'
-    //         });
-    //     }
-
-    //     setLoading(false);
-    //     setSubmitting(false);
-    // };
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setLoading(true);
 
@@ -352,7 +227,7 @@ const Purchase = () => {
         const userId = localStorage.getItem("id");
 
         if (!token || !userId) {
-            navigate("/");
+            // navigate("/");
             return;
         }
 
@@ -404,7 +279,7 @@ const Purchase = () => {
             initiator: values.initiator.length > 0
                 ? values.initiator.map(user => user.label).join(', ')
                 : '',
-            users: values.users.map((user) => user.value),
+            users: values.users.map((user) => user.email),
         };
 
         try {
@@ -413,14 +288,15 @@ const Purchase = () => {
                 requestPayload,
                 {
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                        'userId': userId,
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                        userId: userId,
                     }
                 }
             );
 
-            // Axios automatically parses JSON, so response.data is already available
+            console.log('api request:', response);
+
             if (response.data.statusCode === 200) {
                 console.log('Form submitted successfully:', response.data);
                 Swal.fire('Success!', 'Project created successfully.', 'success');
@@ -431,166 +307,11 @@ const Purchase = () => {
             }
         } catch (error) {
             console.error('Error:', error);
-
-            // Handle network errors or API errors
             Swal.fire('Error!', error.response?.data?.statusMessage || 'An unexpected error occurred. Please try again later.', 'error');
         } finally {
             setSubmitting(false);
         }
     };
-
-    // const onFormSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     const confirmResult = await Swal.fire({
-    //         title: 'Are you sure?',
-    //         text: 'Do you want to create this project?',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Yes, create it!',
-    //         cancelButtonText: 'No, cancel',
-    //     });
-
-    //     if (!confirmResult.isConfirmed) {
-    //         setSubmitting(false);
-    //         return; // Stop the function if user cancels
-    //     }
-
-    //     const requestPayload = {
-    //         name: values.name,
-    //         shortName: values.shortName,
-    //         company: values.company,
-    //         type: values.type,
-    //         initiator: values.initiator.length > 0
-    //             ? values.initiator.map(user => user.label).join(', ')  // Convert to a string
-    //             : '',
-    //         users: values.users.map((user) => user.value),
-    //     };
-
-    //     try {
-    //         const response = await fetch(`${Api_base_url}/api/project/create-single-project`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${token}`,
-    //                 userId: userId,
-    //             },
-    //             body: JSON.stringify(requestPayload),
-    //         });
-
-    //         if (response.data.statusCode === 200) {
-    //             const result = await response.json();
-    //             console.log('Form submitted successfully:', result);
-    //             Swal.fire('Success!', 'Project created successfully.', 'success');
-    //             resetForm();
-    //         } else {
-    //             console.error('Error submitting form:', response.statusText);
-    //             Swal.fire('Error!', `Failed to create project: ${response.statusText}`, 'error');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //         Swal.fire('Error!', 'An unexpected error occurred. Please try again later.', 'error');
-    //     } finally {
-    //         setSubmitting(false);
-    //     }
-    // };
-
-    // const onFormSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     const requestPayload = {
-    //         name: values.name,
-    //         shortName: values.shortName,
-    //         company: values.company,
-    //         type: values.type,
-    //         // initiator: values.initiator,
-    //         initiator: values.initiator.length > 0
-    //             ? values.initiator.map(user => user.label).join(', ')  // Convert to a string
-    //             : '',
-    //         users: values.users.map((user) => user.value),
-    //     };
-
-    //     try {
-    //         const response = await fetch(`${Api_base_url}/api/project/create-single-project`, {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: `Bearer ${token}`,
-    //                 userId: userId,
-    //             },
-    //             body: JSON.stringify(requestPayload),
-    //         });
-
-    //         if (response.ok) {
-    //             const result = await response.json();
-    //             console.log('Form submitted successfully:', result);
-    //             Swal.fire('Success!', 'Project created successfully.', 'success');
-    //             resetForm();
-    //         } else {
-    //             console.error('Error submitting form:', response.statusText);
-    //             Swal.fire('Error!', `Failed to create project: ${response.statusText}`, 'error');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //         Swal.fire('Error!', 'An unexpected error occurred. Please try again later.', 'error');
-    //     } finally {
-    //         setSubmitting(false);
-    //     }
-    // };
-
-    // const create = async (e) => {
-    //     const token = localStorage.getItem("jwttoken");
-    //     const userId = localStorage.getItem("id");
-    //     e.preventDefault();
-
-    //     const requestPayload = {
-    //         name,
-    //         shortName,
-    //         company,
-    //         type,
-    //         initiator,
-    //         users: selectedUsers
-    //     };
-
-    //     try {
-    //         const response = await fetch(`${Api_base_url}/api/project/create-single-project`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //                 userId: userId,
-    //             },
-    //             body: JSON.stringify(requestPayload),
-    //         });
-
-    //         if (response.ok) {
-    //             const result = await response.json();
-    //             console.log("Form submitted successfully:", result);
-
-    //             Swal.fire({
-    //                 title: 'Success!',
-    //                 text: 'Project created successfully.',
-    //                 icon: 'success',
-    //                 confirmButtonText: 'OK'
-    //             });
-
-    //         } else {
-    //             console.error("Error submitting form:", response.statusText);
-
-    //             Swal.fire({
-    //                 title: 'Error!',
-    //                 text: `Failed to create project: ${response.statusText}`,
-    //                 icon: 'error',
-    //                 confirmButtonText: 'Try Again'
-    //             });
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error);
-
-    //         Swal.fire({
-    //             title: 'Error!',
-    //             text: 'An unexpected error occurred. Please try again later.',
-    //             icon: 'error',
-    //             confirmButtonText: 'OK'
-    //         });
-    //     }
-    // };
 
     return (
         <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
@@ -606,26 +327,18 @@ const Purchase = () => {
                 <Tab label="Create Project" />
             </Tabs>
 
-            {/* Tab Content */}
             <Box sx={{ width: '100%', padding: 3 }}>
                 {activeTab === 0 && (
                     <div className="container px-4 pb-4 mt-4">
-
                         <Card className="card-form p-3">
-
                             <Box sx={{ width: '100%', padding: 3 }}>
                                 <Typography variant="h6" gutterBottom>
-
                                     <div className="label-form" style={{ top: "-184px" }} >
-
-                                        <h6>  Create Purchase Project</h6>
+                                        <h6>Create Purchase Project</h6>
                                     </div>
-
                                 </Typography>
-
                                 <Card >
                                     <CardContent className="card-body-form">
-
                                         <Formik
                                             initialValues={{
                                                 name: '',
@@ -659,12 +372,6 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Company */}
-                                                            {/* <Field
-                                                                name="company"
-                                                                placeholder="Company"
-                                                                className="form-control mb-3"
-                                                            /> */}
                                                             <Field
                                                                 as={TextField}
                                                                 fullWidth
@@ -689,12 +396,6 @@ const Purchase = () => {
                                                     </div>
                                                     <div className='row'>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Initiator */}
-                                                            {/* <Field
-                                                                name="initiator"
-                                                                placeholder="Initiator"
-                                                                className="form-control mb-3"
-                                                            /> */}
                                                             <Select
                                                                 isMulti
                                                                 // onFocus={getUsers}
@@ -739,7 +440,6 @@ const Purchase = () => {
                                                         </div>
                                                     </div>
                                                     <div className='row'>
-
                                                         <div className="col-md-4 mb-4">
                                                             {/* Advance Hierarchy Emails */}
                                                             <Select
@@ -769,21 +469,15 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                     </div>
-
-                                                    {/* Submit Button */}
                                                     <button type="submit" className="btn btn-primary">
                                                         Submit
                                                     </button>
                                                 </Form>
                                             )}
                                         </Formik>
-
                                     </CardContent>
                                 </Card>
-
-
                             </Box>
-
                         </Card>
                     </div>
                 )}
@@ -800,7 +494,6 @@ const Purchase = () => {
                             >
                                 {({ values, handleChange, handleBlur, setFieldValue, isSubmitting, errors, touched }) => (
                                     <Form>
-
                                         <div className="row">
                                             <div className="col-md-4 mb-4">
                                                 <Field
@@ -878,25 +571,6 @@ const Purchase = () => {
                                                 </Field>
                                             </div>
                                             <div className="col-md-4 mb-4">
-                                                {/* <Select
-                                                    isMulti
-                                                    name="initiator"
-                                                    options={userOptions2}
-                                                    value={userOptions2.filter((option) =>
-                                                        values.initiator.some((user) => user.value === option.value)
-                                                    )}
-                                                    onChange={(selected) => {
-                                                        setFieldValue(
-                                                            "initiator",
-                                                            selected.map(user => user.label).join(", ") // Convert array to string
-                                                        );
-                                                    }}
-                                                    getOptionLabel={(e) => e.label}
-                                                    getOptionValue={(e) => e.value}
-                                                    placeholder="Select Initiator"
-                                                /> */}
-
-
                                                 <Select
                                                     isMulti
                                                     name="initiator"
@@ -911,67 +585,6 @@ const Purchase = () => {
                                                     getOptionValue={(e) => e.value}
                                                     placeholder="Select Initiator"
                                                 />
-
-
-
-
-                                                {/* <Select
-                                                    isMulti
-                                                    name="initiator"
-                                                    options={userOptions2}
-                                                    value={Array.isArray(values.initiator) ? userOptions2.filter((option) =>
-                                                        values.initiator.some((initiator) => initiator.value === option.value)
-                                                    ) : []}
-                                                    onChange={(selected) => setFieldValue('initiator', selected || [])} // Ensure empty array if no selection
-                                                    getOptionLabel={(e) => e.label}
-                                                    getOptionValue={(e) => e.value}
-                                                    placeholder="Select Initiator"
-                                                />
-
-                                                {touched.initiator && errors.initiator && (
-                                                    <Typography color="error" variant="caption">
-                                                        {errors.initiator}
-                                                    </Typography>
-                                                )} */}
-                                                {/* <Select
-                                                    isMulti
-                                                    name="initiator"
-                                                    options={userOptions2}
-                                                    value={userOptions2.filter((option) =>
-                                                        values.initiator.some((initiator) => initiator.value === option.value)
-                                                    )}
-                                                    onChange={(selected) => setFieldValue('initiator', selected)}
-                                                    getOptionLabel={(e) => e.label}
-                                                    getOptionValue={(e) => e.value}
-                                                    placeholder="Select Initiator"
-                                                />
-
-                                                {touched.initiator && errors.initiator && (
-                                                    <Typography color="error" variant="caption">
-                                                        {errors.initiator}
-                                                    </Typography>
-                                                )} */}
-
-                                                {/* <Field
-                                                    as={TextField}
-                                                    fullWidth
-                                                    select
-                                                    label="Initiator"
-                                                    name="initiator"
-                                                    value={values.initiator}
-                                                    onChange={handleChange}
-                                                    onBlur={handleBlur}
-                                                    error={touched.initiator && Boolean(errors.initiator)}
-                                                    helperText={touched.initiator && errors.initiator}
-                                                    margin="normal"
-                                                >
-                                                    <MenuItem value="">Select Initiator</MenuItem>
-                                                    {initiators.map((initiator, i) => (
-                                                        <MenuItem key={i} value={initiator.email}>
-                                                            {initiator.email}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Field> */}
                                             </div>
                                             <div className="col-md-4 mb-4">
                                                 <div style={{ margin: '16px 0' }}>
@@ -1015,7 +628,6 @@ const Purchase = () => {
                             </Formik>
                         </CardContent>
                     </Card>
-
                 )}
             </Box>
         </Box >

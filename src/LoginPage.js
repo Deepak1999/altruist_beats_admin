@@ -24,22 +24,6 @@ const LoginPage = ({ fetchModules = () => { } }) => {
     const handleTogglePassword = () => {
         setShowPassword((prev) => !prev);
     };
-    // useEffect(() => {
-    //     const params = new URLSearchParams(window.location.hash.substring(2));
-    //     const userId = params.get('userId');
-    //     const password = params.get('password');
-    //     const qStr = params.get('qStr');
-
-    //     console.log('Params:', window.location.hash.substring(2));
-    //     console.log('UserId:', userId);
-    //     console.log('Password:', password);
-    //     console.log('qStr:', qStr);
-
-    //     if (userId && password) {
-    //         // setCredentials({ username: userId, password });
-    //         handleLoginParams(userId, password);
-    //     }
-    // }, [location.search]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -72,27 +56,6 @@ const LoginPage = ({ fetchModules = () => { } }) => {
         }
     };
 
-    // const decryptBody = (encryptedBody, aesKey) => {
-    //     try {
-    //         const keyBytes = CryptoJS.enc.Base64.parse(aesKey);
-    //         if (keyBytes.words.length !== 8) {
-    //             console.error('Invalid AES key length', aesKey);
-    //             throw new Error('Invalid AES key length');
-    //         }
-    //         const key = CryptoJS.lib.WordArray.create(keyBytes.words.slice(0, 8));
-    //         const decrypted = CryptoJS.AES.decrypt(encryptedBody, key, {
-    //             mode: CryptoJS.mode.ECB,
-    //             padding: CryptoJS.pad.Pkcs7
-    //         });
-    //         const decryptedBody = decrypted.toString(CryptoJS.enc.Utf8);
-    //         console.log("Decrypted Body:", decryptedBody);
-    //         return JSON.parse(decryptedBody);
-    //     } catch (error) {
-    //         console.error('Decryption error:', error);
-    //         return null;
-    //     }
-    // };
-
     const handleDecryption = () => {
         const params = new URLSearchParams(window.location.hash.substring(2));
         const encryptedQuery = params.get('qStr');
@@ -111,7 +74,7 @@ const LoginPage = ({ fetchModules = () => { } }) => {
     };
 
     const handleLoginParams = async (userId, encryptedPassword) => {
-        if (loginCalled.current) return; // Ensure function runs only once
+        if (loginCalled.current) return;
         loginCalled.current = true;
 
         try {
@@ -124,33 +87,22 @@ const LoginPage = ({ fetchModules = () => { } }) => {
             console.log("encryptedPassword:", encryptedPassword);
             console.log("response:", response);
             const { userId: id, jwttoken, name, roleId } = response.data;
-
-            // Save to local storage
             localStorage.setItem('jwttoken', jwttoken);
             localStorage.setItem('id', id);
             localStorage.setItem('username', name);
             localStorage.setItem('roleId', roleId);
-
             localStorage.setItem('home', "1");
-
-
             console.log("✅ Login Successful");
             await fetchModules();
             navigate('/projects');
-
-
         } catch (error) {
             console.error('❌ Login failed:', error);
         }
     };
 
-
-
     React.useEffect(() => {
         handleDecryption();
     }, []);
-
-
 
     const handleLogin = async () => {
         setLoading(true);
@@ -173,20 +125,13 @@ const LoginPage = ({ fetchModules = () => { } }) => {
         try {
             const response = await axios.post(apiEndpoint, { email: username, password });
             const { userId: id, jwttoken, name, roleId } = response.data;
-
             localStorage.setItem('jwttoken', jwttoken);
             localStorage.setItem('id', id);
             localStorage.setItem('username', name);
-
-
-            // localStorage.setItem('username', name);
             localStorage.setItem('roleId', roleId);
-
-
             console.log("loginnnnnnnnnnnnnnnnnn", response.data.statusMessage)
             await fetchModules();
             navigate('/projects');
-            // navigate('/home');
 
         } catch (error) {
             handleError(error);
@@ -194,9 +139,6 @@ const LoginPage = ({ fetchModules = () => { } }) => {
             setLoading(false);
         }
     };
-
-
-
 
     const handleError = (error) => {
         if (error.response) {
@@ -265,25 +207,12 @@ const LoginPage = ({ fetchModules = () => { } }) => {
                             )
                         }}
                     />
-                    {/* <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Password"
-                        name="password"
-                        type="password"
-                        style={{ marginBottom: '25px' }}
-                        value={credentials.password}
-                        onChange={handleChange}
-                    /> */}
                     {error && <Typography color="error" align="center">{error}</Typography>}
                     <Button
                         variant="contained"
                         color="primary"
                         fullWidth
                         onClick={handleSubmit}
-                        // onClick={handleLoginParams}
                         disabled={loading}
                     >
                         {loading ? <CircularProgress size={24} /> : 'Login'}

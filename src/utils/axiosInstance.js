@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 500) {
-      navigate('/');
+      // navigate('/');
     }
     return Promise.reject(error);
   }

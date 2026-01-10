@@ -113,14 +113,14 @@ axios.interceptors.response.use(
     if (error.response) {
       if (error.response.status === 404) {
         alert("Error 404: Resource Not Found!");
-        window.location.href = "/"; // Redirects to home page
+        // window.location.href = "/"; // Redirects to home page
       } else if (error.response.status === 500) {
         // alert("Error 500: Internal Server Error!");
-        window.location.href = "/"; // Redirects to home page
+        // window.location.href = "/"; // Redirects to home page
       }
     } else {
       // alert("An unknown error occurred!");
-      window.location.href = "/"; // Redirects to home page
+      // window.location.href = "/"; // Redirects to home page
     }
 
     console.error("Response Error:", error);

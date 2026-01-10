@@ -7,7 +7,6 @@ import Home from './components/Home';
 import NavBar from './components/Navbar';
 import Loader from './components/Loader';
 
-// Import all components
 import PostCreateProjects from './components/PostCreateProjects';
 import UpdateProjectHierarchy from './components/UpdateProjectHierarchy';
 import AddProjectUsers from './components/AddProjectUsers';
@@ -35,7 +34,6 @@ import AddUsers from './components/Hierarchy/AddUsers';
 import DownloadHierarchy from './components/Hierarchy/DownloadHierarchy';
 // import SignUpUsers from './components/SignUpUsers';
 
-// Map module names to components
 const componentMap = {
   'LoginPage': LoginPage,
   'Projects': Projects,
@@ -96,12 +94,12 @@ const AppRoutes = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (location.pathname !== '/') { // Prevent fetching on login page
+    if (location.pathname !== '/') {
       fetchModules();
     }
-  }, [location.pathname]); // Re-run when pathname changes
-
+  }, [location.pathname]);
 
   if (loading) {
     return <Loader loading={loading} />;
@@ -109,7 +107,6 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* Dynamic routes based on user role */}
       {modules
         .filter(module => module.roleId === Number(roleId) && module.active === true)
         .map(module => {
@@ -124,11 +121,9 @@ const AppRoutes = () => {
           );
         })}
 
-      {/* Default routes */}
       <Route path="/" element={<LoginPage />} />
       <Route path="/home" element={<Home />} />
       <Route path="/profile" element={<ProfilePage />} />
-      {/* <Route path="/sign" element={< SignUpUsers />} /> */}
     </Routes>
   );
 };
