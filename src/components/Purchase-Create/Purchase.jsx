@@ -254,6 +254,7 @@ const Purchase = () => {
         initiator: Yup.array().min(1, 'Required'),
         users: Yup.array().min(1, 'At least one user is required'),
     });
+    
     // import axios from 'axios';
     // 
     const onFormSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -315,7 +316,6 @@ const Purchase = () => {
 
     return (
         <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {/* Tab Headers */}
             <Tabs
                 value={activeTab}
                 onChange={handleChange}
@@ -354,7 +354,6 @@ const Purchase = () => {
                                         >
                                             {({ values, handleChange, setFieldValue, errors, touched, handleBlur }) => (
                                                 <Form>
-                                                    {/* Name */}
                                                     <div className='row'>
                                                         <div className="col-md-4 mb-4">
                                                             <Field
@@ -364,7 +363,6 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Short Name */}
                                                             <Field
                                                                 name="shortName"
                                                                 placeholder="Short Name"
@@ -398,7 +396,6 @@ const Purchase = () => {
                                                         <div className="col-md-4 mb-4">
                                                             <Select
                                                                 isMulti
-                                                                // onFocus={getUsers}
                                                                 options={initiator.map(user => ({
                                                                     value: user.email,
                                                                     label: `${user.name} (${user.email})`
@@ -410,7 +407,6 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Users */}
                                                             <Select
                                                                 isMulti
                                                                 onFocus={getUsers}
@@ -425,7 +421,6 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Modifier Emails */}
                                                             <Select
                                                                 isMulti
                                                                 options={modifierEmails.map(user => ({
@@ -441,7 +436,6 @@ const Purchase = () => {
                                                     </div>
                                                     <div className='row'>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Advance Hierarchy Emails */}
                                                             <Select
                                                                 isMulti
                                                                 options={advanceHierarchyEmails.map(user => ({
@@ -455,7 +449,6 @@ const Purchase = () => {
                                                             />
                                                         </div>
                                                         <div className="col-md-4 mb-4">
-                                                            {/* Payment Hierarchy Emails */}
                                                             <Select
                                                                 isMulti
                                                                 options={paymentHierarchyEmails.map(user => ({
@@ -577,9 +570,9 @@ const Purchase = () => {
                                                     options={userOptions2}
                                                     value={Array.isArray(values.initiator) ? userOptions2.filter((option) =>
                                                         values.initiator.some((user) => user.value === option.value)
-                                                    ) : []} // Ensure initiator is an array
+                                                    ) : []}
                                                     onChange={(selected) => {
-                                                        setFieldValue("initiator", selected); // Keep it as an array
+                                                        setFieldValue("initiator", selected);
                                                     }}
                                                     getOptionLabel={(e) => e.label}
                                                     getOptionValue={(e) => e.value}

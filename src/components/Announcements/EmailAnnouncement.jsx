@@ -6,7 +6,7 @@ import Api_base_url from '../Api_base_url/Api_base_url';
 import Swal from 'sweetalert2';
 
 const EmailAnnouncement = () => {
-    const [selection, setSelection] = useState('All');
+    const [selection, setSelection] = useState('Email');
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [message, setMessage] = useState('');
     const [subject, setSubject] = useState('');
@@ -70,7 +70,8 @@ const EmailAnnouncement = () => {
 
         const emailData = {
             type: selection,
-            emails: selection === 'Email' && selectedUsers.length > 0 ? selectedUsers : ['all'],
+            emails: selection === 'Email' && selectedUsers.length > 0 ? selectedUsers : ['email'],
+            // emails: selection === 'Email' && selectedUsers.length > 0 ? selectedUsers : ['all'],
             subject: subject,
             message: message,
         };
@@ -105,21 +106,80 @@ const EmailAnnouncement = () => {
     };
 
     return (
+        // <div className="announcement-container">
+        //     <h2>Email Announcement</h2>
+
+        //     <div className="dropdown-row">
+        //         <div className="dropdown-container">
+        //             <label htmlFor="selection">Select Type</label>
+        //             <select id="selection" value={selection} onChange={handleSelectionChange}>
+        //                 {/* <option value="All">All</option> */}
+        //                 <option value="Email">Email</option>
+        //             </select>
+        //         </div>
+
+        //         {selection === 'Email' && (
+        //             <div className="dropdown-container">
+        //                 <label htmlFor="users">Select Emails</label>
+        //                 <Select
+        //                     isMulti
+        //                     name="users"
+        //                     options={users}
+        //                     value={users.filter(option =>
+        //                         selectedUsers.includes(option.value)
+        //                     )}
+        //                     onChange={handleUserChange}
+        //                     getOptionLabel={(e) => e.label}
+        //                     getOptionValue={(e) => e.value}
+        //                 />
+        //             </div>
+        //         )}
+
+        //         <div className="dropdown-container">
+        //             <label htmlFor="message">Enter Subject</label>
+        //             <input
+        //                 type="text"
+        //                 id="subject"
+        //                 value={subject}
+        //                 onChange={(e) => setSubject(e.target.value)}
+        //                 placeholder="Type your Subject here"
+        //             />
+        //         </div>
+
+        //         <div className="dropdown-container">
+        //             <label htmlFor="message">Enter Message</label>
+        //             <input
+        //                 type="text"
+        //                 id="message"
+        //                 value={message}
+        //                 onChange={(e) => setMessage(e.target.value)}
+        //                 placeholder="Type your message here"
+        //             />
+        //         </div>
+        //     </div>
+
+        //     <div className="submit-container">
+        //         <button onClick={handleSubmit}>Submit</button>
+        //     </div>
+        // </div>
+
+
+
         <div className="announcement-container">
             <h2>Email Announcement</h2>
 
-            <div className="dropdown-row">
-                <div className="dropdown-container">
-                    <label htmlFor="selection">Select Type</label>
-                    <select id="selection" value={selection} onChange={handleSelectionChange}>
-                        <option value="All">All</option>
+            <div className="form-grid">
+                <div className="form-group">
+                    <label>Select Type</label>
+                    <select value={selection} onChange={handleSelectionChange}>
+                        {/* <option value="All">All</option> */}
                         <option value="Email">Email</option>
                     </select>
                 </div>
 
-                {selection === 'Email' && (
-                    <div className="dropdown-container">
-                        <label htmlFor="users">Select Emails</label>
+                {selection === "Email" && (
+                    <div className="form-group">
+                        <label>Select Emails</label>
                         <Select
                             isMulti
                             name="users"
@@ -128,31 +188,27 @@ const EmailAnnouncement = () => {
                                 selectedUsers.includes(option.value)
                             )}
                             onChange={handleUserChange}
-                            getOptionLabel={(e) => e.label}
-                            getOptionValue={(e) => e.value}
                         />
                     </div>
                 )}
 
-                <div className="dropdown-container">
-                    <label htmlFor="message">Enter Subject</label>
+                <div className="form-group">
+                    <label>Enter Subject</label>
                     <input
                         type="text"
-                        id="subject"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
-                        placeholder="Type your Subject here"
+                        placeholder="Type your subject"
                     />
                 </div>
 
-                <div className="dropdown-container">
-                    <label htmlFor="message">Enter Message</label>
+                <div className="form-group full-width">
+                    <label>Enter Message</label>
                     <input
                         type="text"
-                        id="message"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Type your message here"
+                        placeholder="Type your message"
                     />
                 </div>
             </div>
@@ -161,6 +217,8 @@ const EmailAnnouncement = () => {
                 <button onClick={handleSubmit}>Submit</button>
             </div>
         </div>
+
+
     );
 };
 
