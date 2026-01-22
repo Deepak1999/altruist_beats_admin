@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik, Form, Field } from "formik";
 import { Button, Card } from "react-bootstrap";
 import Select from "react-select";
@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HomeIcon from '@mui/icons-material/Home';
 import HomeButton from "../HomeButton"
+import Api_base_url from '../Api_base_url/Api_base_url';
 
 const DownloadHierarchy = () => {
 
@@ -14,6 +15,141 @@ const DownloadHierarchy = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const ho = localStorage.getItem("home");
+    const [companies, setCompanies] = useState([]);
+
+    const typeOptions = [
+        { value: 0, label: "Expense" },
+        { value: 1, label: "Purchase" },
+        { value: 2, label: "Claim" },
+    ];
+
+    const handleFetchCompanies = async () => {
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem("authorization");
+            const userId = localStorage.getItem("userid");
+
+            const response = await fetch(`${Api_base_url}/api/project/get/companies`,
+                {
+                    method: "GET",
+                    headers: {
+                        authorization: token,
+                        userid: userId,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch companies");
+            }
+
+            const data = await response.json();
+
+            const options =
+                data.companies
+                    ?.filter((item) => item.isActive === 1)
+                    .map((item) => ({
+                        value: item.id,
+                        label: item.name,
+                    })) || [];
+
+            setCompanies(options);
+        } catch (error) {
+            console.error("Error fetching companies:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFetchProjects = async () => {
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem("jwttoken");
+            const userId = localStorage.getItem("id");
+
+            const response = await fetch(`${Api_base_url}/api/project/getprojects`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userid: userId,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch projects");
+            }
+
+            const data = await response.json();
+
+            const options = data.map((item) => ({
+                value: item.id,
+                label: item.name,
+            }));
+
+            setProjects(options);
+        } catch (error) {
+            console.error("Error fetching projects:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (values, { setSubmitting }) => {
+        try {
+            const token = localStorage.getItem("jwttoken");
+            const userId = localStorage.getItem("id");
+
+            const payload = {
+                companyIds: values.companyIds?.map(c => c.value),
+                projectIds: values.projectIds?.map(p => p.value),
+                types: values.type?.map(t => t.value),
+            };
+
+            const response = await fetch(`${Api_base_url}/api/project/download-hierarchy`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        userid: userId,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Download failed");
+            }
+
+            // ✅ handle file download
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "hierarchy.txt";
+            document.body.appendChild(link);
+            link.click();
+
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Download error:", error);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    useEffect(() => {
+        handleFetchCompanies();
+        handleFetchProjects();
+    }, []);
 
     return (
         <>
@@ -27,11 +163,11 @@ const DownloadHierarchy = () => {
                     <Card.Body className="card-1-form d-block">
                         <Formik
                             initialValues={{
+                                companyIds: [],
                                 projectIds: [],
-                                emails: [],
-                                updateHierarchy: "",
+                                type: [],
                             }}
-                        // onSubmit={handleSubmit}
+                            onSubmit={handleSubmit}
                         >
                             {({ values, setFieldValue, isSubmitting, resetForm }) => (
                                 <Form>
@@ -40,30 +176,30 @@ const DownloadHierarchy = () => {
                                             <label className="form-label">Business Company</label>
                                             <Select
                                                 isMulti
-                                                options={projects}
-                                                value={values.projectIds}
-                                                onChange={(selectedOptions) =>
-                                                    setFieldValue("projectIds", selectedOptions)
-                                                }
-                                                isLoading={loading}
+                                                options={companies}
+                                                value={values.companyIds}
+                                                onChange={(val) => setFieldValue("companyIds", val)}
                                                 placeholder="Select Business Company"
-                                                className="basic-multi-select"
-                                                classNamePrefix="select"
                                             />
                                         </div>
                                         <div className="col-md-3 mb-3">
-                                            <label className="form-label">Project ID</label>
+                                            <label className="form-label">Type</label>
+                                            <Select
+                                                isMulti
+                                                options={typeOptions}
+                                                value={values.type}
+                                                onChange={(val) => setFieldValue("type", val)}
+                                                placeholder="Select Type"
+                                            />
+                                        </div>
+                                        <div className="col-md-3 mb-3">
+                                            <label className="form-label">Project</label>
                                             <Select
                                                 isMulti
                                                 options={projects}
                                                 value={values.projectIds}
-                                                onChange={(selectedOptions) =>
-                                                    setFieldValue("projectIds", selectedOptions)
-                                                }
-                                                isLoading={loading}
+                                                onChange={(val) => setFieldValue("projectIds", val)}
                                                 placeholder="Select Projects"
-                                                className="basic-multi-select"
-                                                classNamePrefix="select"
                                             />
                                         </div>
                                     </div>
@@ -74,7 +210,7 @@ const DownloadHierarchy = () => {
                                             variant="primary"
                                             disabled={isSubmitting}
                                         >
-                                            {isSubmitting ? "Submitting..." : "Download"}
+                                            {isSubmitting ? "Downloading..." : "Download"}
                                         </Button>
                                         <Button
                                             className="m-2"

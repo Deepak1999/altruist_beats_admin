@@ -17,7 +17,7 @@ function UpdateProjectHierarchy() {
     const [message, setMessage] = useState('');
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef(null);
-const ho = localStorage.getItem('home');
+    const ho = localStorage.getItem('home');
     // Retrieve token and userId from localStorage
     const token = localStorage.getItem('jwttoken');
     const userId = localStorage.getItem('id'); // Optional, if you need the userId for something
@@ -144,55 +144,55 @@ const ho = localStorage.getItem('home');
     };
 
     return (
-        <> 
-                {ho === "1" ? (
-                                       <HomeIcon
-                                           style={{ cursor: 'pointer' }}
-                                           onClick={() => window.location.href = 'https://beats.altruistindia.com/#/'}
-                                       />
-                                   ) : null}
-        <div className="container mt-4">
-          <ToastContainer />
-            {/* {uploading && <Loader loading={uploading} />} */}
-            <div className={`content-wrapper ${uploading ? 'loading-active' : ''}`}>
-                <div className="label-form" style={{ marginTop: '188px' }}>
+        <>
+            {ho === "1" ? (
+                <HomeIcon
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => window.location.href = 'https://beats.altruistindia.com/#/'}
+                />
+            ) : null}
+            <div className="container mt-4">
+                <ToastContainer />
+                {/* {uploading && <Loader loading={uploading} />} */}
+                <div className={`content-wrapper ${uploading ? 'loading-active' : ''}`}>
+                    <div className="label-form" style={{ marginTop: '188px' }}>
 
-                    <h6>Bulk Update Project Hierarchy</h6>
-                </div>
-                <div className="card-form p-3">
-                    <div className="card-body-form">
-                        <div className="card-1-form" style={{ paddingTop: "0px" }}>
-                            <label htmlFor="fileInput" className="form-label-form">
-                                Supported format: xlsx, xls, csv
-                            </label>
-                            <br />
-                            <input
-                                type="file"
-                                id="fileInput"
-                                ref={fileInputRef}
-                                onChange={onFileChange}
-                                className="form-control-form mb-3"
-                                multiple
-                            />
-                        </div>
-                       <div className="d-flex justify-content-center">
-                            <button className="btn btn-primary me-2" onClick={onFileUpload} disabled={uploading}>
-                                {uploading ? 'Uploading...' : 'Submit'}
-                            </button>
-                            <button className="btn btn-danger" onClick={handleReset}>
-                                Reset
-                            </button>
-                        </div>
-
-                        {message && (
-                            <div className={`alert ${message.toLowerCase().includes('error') || message.includes('bad') ? 'alert-danger' : 'alert-success'}`}>
-                                {message}
+                        <h6>Bulk Update Project Hierarchy</h6>
+                    </div>
+                    <div className="card-form p-3">
+                        <div className="card-body-form">
+                            <div className="card-1-form" style={{ paddingTop: "0px" }}>
+                                <label htmlFor="fileInput" className="form-label-form">
+                                    Supported format: xlsx, xls, csv
+                                </label>
+                                <br />
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    ref={fileInputRef}
+                                    onChange={onFileChange}
+                                    className="form-control-form mb-3"
+                                    multiple
+                                />
                             </div>
-                        )}
+                            <div className="d-flex justify-content-center">
+                                <button className="btn btn-primary me-2" onClick={onFileUpload} disabled={uploading}>
+                                    {uploading ? 'Uploading...' : 'Submit'}
+                                </button>
+                                <button className="btn btn-danger" onClick={handleReset}>
+                                    Reset
+                                </button>
+                            </div>
+
+                            {message && (
+                                <div className={`alert ${message.toLowerCase().includes('error') || message.includes('bad') ? 'alert-danger' : 'alert-success'}`}>
+                                    {message}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </>
     );
 }
