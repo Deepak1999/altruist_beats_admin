@@ -127,7 +127,6 @@ const DownloadHierarchy = () => {
                 throw new Error("Download failed");
             }
 
-            // ✅ handle file download
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
 
